@@ -1,0 +1,16 @@
+{
+  "name": "notar-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hitesh Yadav",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.13.2",
+    "mongoose": "^8.20.0",
+    "node": "^25.2.1"
+  }
+}
