@@ -6,13 +6,16 @@ import { Menu, X, Shield, Phone, Gavel } from "lucide-react";
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const [loggedIn, setLoggedIn] = useState(true);
+
   const navItems = [
-    { name: "How It Works", href: "#how-it-works" },
-    { name: "Documents", href: "#documents" },
-    { name: "Court Orders", href: "#court-orders" },
-    { name: "Pricing", href: "#pricing" },
-    { name: "FAQ", href: "#faq" },
-    { name: "Contact", href: "#contact" },
+    { name: "Home", href: "/" },
+    { name: "About", href: "/about" },
+    { name: "Pricing", href: "/pricing" },
+    { name: "Contact", href: "/contact" },
+    { name: "Resources", href: "/resources" },
+    // { name: "FAQ", href: "#faq" },
+    // { name: "Contact", href: "#contact" },
   ];
 
   return (
@@ -24,12 +27,12 @@ export default function Header() {
             {/* Logo + Trust Badge */}
             <div className="flex items-center gap-8">
               <a href="/" className="flex items-center gap-3">
-                <div className="bg-gradient-to-br from-indigo-600 to-blue-700 text-white font-bold text-2xl w-12 h-12 rounded-lg flex items-center justify-center shadow-lg">
-                  NE
+                <div className="bg-linear-to-br from-indigo-600 to-blue-700 text-white font-bold text-2xl w-12 h-12 rounded-lg flex items-center justify-center shadow-lg">
+                  OD
                 </div>
                 <div>
                   <h1 className="text-xl font-extrabold text-gray-900">
-                    NotarEase
+                    Omm Documentation
                   </h1>
                   <p className="text-xs text-gray-500 -mt-1">Online e-Notary</p>
                 </div>
@@ -60,17 +63,27 @@ export default function Header() {
               {/* Phone Number - Hidden on small screens */}
               <div className="hidden md:flex items-center gap-2 text-gray-800 font-semibold">
                 <Phone className="w-5 h-5 text-indigo-600" />
-                <span>+91 98765 43210</span>
+                <span>+91 9898989898</span>
               </div>
 
               {/* Book Appointment Button */}
-              <a
-                href="#book"
-                className="bg-gradient-to-r hidden md:flex from-indigo-600 to-blue-700 text-white px-6 py-3 rounded-full font-bold hover:shadow-xl transition transform hover:scale-105 flex items-center gap-2"
-              >
-                <Gavel className="w-5 h-5" />
-                Book Appointment
-              </a>
+              {loggedIn ? (
+                <a
+                  href="/dashboard"
+                  className="bg-linear-to-r hidden md:flex from-indigo-600 to-blue-700 text-white px-6 py-3 rounded-full font-bold hover:shadow-xl transition transform hover:scale-105 flex items-center gap-2"
+                >
+                  {/* <Gavel className="w-5 h-5" /> */}
+                  Dashboard
+                </a>
+              ) : (
+                <a
+                  href="/login"
+                  className="bg-linear-to-r hidden md:flex from-indigo-600 to-blue-700 text-white px-6 py-3 rounded-full font-bold hover:shadow-xl transition transform hover:scale-105 flex items-center gap-2"
+                >
+                  {/* <Gavel className="w-5 h-5" /> */}
+                  Sign up/ Login
+                </a>
+              )}
 
               {/* Mobile Menu Button */}
               <button
@@ -115,7 +128,7 @@ export default function Header() {
                 </div>
                 <a
                   href="#book"
-                  className="bg-gradient-to-r from-indigo-600 to-blue-700 text-white px-8 py-4 rounded-full font-bold text-center text-lg"
+                  className="bg-linear-to-r from-indigo-600 to-blue-700 text-white px-8 py-4 rounded-full font-bold text-center text-lg"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Book Appointment Now

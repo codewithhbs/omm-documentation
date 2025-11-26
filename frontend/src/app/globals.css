@@ -24,3 +24,14 @@ body {
   color: var(--foreground);
   font-family: "Rubik", sans-serif;
 }
+
+.bgimage{
+  background-image: url('/Fraud.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.bgcolor{
+  background-color: rgba(255, 255, 255, 0.733);
+}

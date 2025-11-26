@@ -1,21 +1,21 @@
 'use client';
 
-import { Shield, Globe, Phone, Mail, Facebook, Twitter, Linkedin, Instagram, Gavel, IndianRupee, Lock } from 'lucide-react';
+import { Shield, Globe, Phone, Mail, Facebook, Twitter, Linkedin, Instagram, IndianRupee, Lock } from 'lucide-react';
 
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-white py-16">
       <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
 
           {/* Column 1: Logo + Tagline */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-6">
-              <div className="bg-gradient-to-br from-indigo-500 to-blue-600 text-white font-bold text-2xl w-12 h-12 rounded-lg flex items-center justify-center shadow-lg">
-                NE
+              <div className="bg-linear-to-br from-indigo-500 to-blue-600 text-white font-bold text-2xl w-12 h-12 rounded-lg flex items-center justify-center shadow-lg">
+                OM
               </div>
               <div>
-                <h3 className="text-2xl font-extrabold">NotarEase</h3>
+                <h3 className="text-2xl font-extrabold">Omm Documentation</h3>
                 <p className="text-xs text-gray-400">India's First Online e-Notary</p>
               </div>
             </div>
@@ -35,16 +35,15 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-bold mb-6 text-indigo-400">Company</h4>
             <ul className="space-y-3 text-gray-400">
-              <li><a href="#about" className="hover:text-white transition">About Us</a></li>
-              <li><a href="#careers" className="hover:text-white transition">Careers</a></li>
-              <li><a href="#blog" className="hover:text-white transition">Blog</a></li>
-              <li><a href="#press" className="hover:text-white transition">Press & Media</a></li>
-              <li><a href="#partners" className="hover:text-white transition">Partner with Us</a></li>
+              <li><a href="/about" className="hover:text-white transition">About Us</a></li>
+              <li><a href="/pricing" className="hover:text-white transition">Pricing</a></li>
+              <li><a href="/contact" className="hover:text-white transition">Contact</a></li>
+              <li><a href="/resources" className="hover:text-white transition">Resources</a></li>
             </ul>
           </div>
 
           {/* Column 3: Services */}
-          <div>
+          {/* <div>
             <h4 className="text-lg font-bold mb-6 text-indigo-400">Services</h4>
             <ul className="space-y-3 text-gray-400">
               <li><a href="#documents" className="hover:text-white transition">All Documents</a></li>
@@ -53,17 +52,15 @@ export default function Footer() {
               <li><a href="#agreement" className="hover:text-white transition">Agreements</a></li>
               <li><a href="#corporate" className="hover:text-white transition">Corporate Plans</a></li>
             </ul>
-          </div>
+          </div> */}
 
           {/* Column 4: Legal */}
           <div>
             <h4 className="text-lg font-bold mb-6 text-indigo-400">Legal</h4>
             <ul className="space-y-3 text-gray-400">
-              <li><a href="#court-orders" className="hover:text-white transition">Court Orders</a></li>
-              <li><a href="#privacy" className="hover:text-white transition">Privacy Policy</a></li>
-              <li><a href="#terms" className="hover:text-white transition">Terms of Service</a></li>
-              <li><a href="#refund" className="hover:text-white transition">Refund Policy</a></li>
-              <li><a href="#disclaimer" className="hover:text-white transition">Disclaimer</a></li>
+              <li><a href="/privacy-policy" className="hover:text-white transition">Privacy Policy</a></li>
+              <li><a href="/terms" className="hover:text-white transition">Terms of Service</a></li>
+              <li><a href="/refund" className="hover:text-white transition">Refund Policy</a></li>
             </ul>
           </div>
 
@@ -73,11 +70,11 @@ export default function Footer() {
             <div className="space-y-4 text-gray-400">
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-indigo-400" />
-                <span>+91 98765 43210</span>
+                <span>+91 9898989898</span>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-indigo-400" />
-                <span>support@notarease.com</span>
+                <span>support@ommdocumentation.com</span>
               </div>
               <div className="flex items-center gap-3">
                 <Globe className="w-5 h-5 text-indigo-400" />
@@ -106,7 +103,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
           <div className="flex items-center gap-6 mb-4 md:mb-0">
-            <p>&copy; 2025 NotarEase Technologies Pvt. Ltd. All rights reserved.</p>
+            <p>&copy; 2025 Omm Documentation. All rights reserved.</p>
             <div className="flex items-center gap-2">
               <span>Made in</span>
               <span className="text-2xl">India</span>
