@@ -191,7 +191,7 @@ export default function Home() {
             className="mt-16 flex flex-col sm:flex-row gap-5 justify-center items-center"
           >
             <button className="group relative px-10 py-5 bg-gradient-to-r from-indigo-600 to-blue-700 text-white font-bold text-lg rounded-full shadow-2xl hover:shadow-indigo-600/50 transform hover:scale-105 transition-all duration-300 flex items-center gap-3 overflow-hidden">
-              <span className="relative z-10">Book Notary Appointment Now</span>
+              <span className="relative z-10">Book Appointment</span>
               <ArrowRight className="w-6 h-6 relative z-10 group-hover:translate-x-1 transition" />
               <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500"></div>
             </button>
