@@ -39,6 +39,7 @@ export default function SlotsTab() {
           <p className="text-sm sm:text-base text-gray-700">
             Below are the currently available timeslots for notary services.
           </p>
+          
         </div>
 
         {/* ✅ Mobile view: cards */}
