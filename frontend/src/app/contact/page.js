@@ -56,7 +56,7 @@ export default function ContactPage() {
               </div>
               <h3 className="text-xl font-bold mb-4">Call Us</h3>
               <p className="text-xl font-extrabold text-indigo-600 mb-2">
-                +91 98765 43210
+                +91 9898989898
               </p>
               <p className="text-gray-600">Available 24×7 • Instant support</p>
               <a
@@ -77,7 +77,7 @@ export default function ContactPage() {
               </div>
               <h3 className="text-xl font-bold mb-4">WhatsApp Us</h3>
               <p className="text-xl font-extrabold text-green-600 mb-2">
-                +91 98765 43210
+                +91 9898989898
               </p>
               <p className="text-gray-600">
                 Fastest response • Share documents directly
@@ -102,7 +102,7 @@ export default function ContactPage() {
               </div>
               <h3 className="text-xl font-bold mb-4">Email Us</h3>
               <p className="text-xl font-extrabold text-blue-600 mb-2">
-                support@ommdocumentation.com
+                support@ommdoc.com
               </p>
               <p className="text-gray-600">
                 Response within 5 minutes during business hours
@@ -194,7 +194,7 @@ export default function ContactPage() {
                 <input
                   type="tel"
                   className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-indigo-600"
-                  placeholder="+91 98765 43210"
+                  placeholder="+91 9898989898"
                 />
               </div>
               <div>

@@ -643,7 +643,7 @@ export default function Home() {
             Aadhaar e-Sign & NE-KYC!
           </p>
 
-          <div className="mt-10 inline-flex items-center gap-3 bg-green-100 text-green-800 px-6 py-3 rounded-full text-lg font-semibold">
+          <div className="mt-10 inline-flex items-center gap-3 bg-green-100 text-green-800 px-6 py-3 md:rounded-full text-lg font-semibold">
             <Shield className="w-6 h-6" />
             Omm Documentation is India's only trusted platform whose eNotarised
             documents have been accepted by courts in India.

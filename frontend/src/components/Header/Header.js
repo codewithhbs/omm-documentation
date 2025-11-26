@@ -124,15 +124,25 @@ export default function Header() {
               <div className="pt-4 flex flex-col gap-4">
                 <div className="flex items-center gap-2 text-gray-800 font-semibold">
                   <Phone className="w-5 h-5 text-indigo-600" />
-                  +91 98765 43210
+                  +91 9898989898
                 </div>
+                {loggedIn ? (
                 <a
-                  href="#book"
+                  href="/dashboard"
                   className="bg-linear-to-r from-indigo-600 to-blue-700 text-white px-8 py-4 rounded-full font-bold text-center text-lg"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Book Appointment Now
+                  Dashboard
                 </a>
+                ) : (
+                <a
+                  href="/login"
+                  className="bg-linear-to-r from-indigo-600 to-blue-700 text-white px-8 py-4 rounded-full font-bold text-center text-lg"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Login
+                </a>
+                )}
               </div>
             </div>
           </div>
