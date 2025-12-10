@@ -26,10 +26,33 @@ const userSchema = new mongoose.Schema(
         },
         role: {
             type: String,
-            enum: ["user", "admin"],
+            enum: ["user", "notary", "admin"],
             default: "user",
         },
-        isVerified: {
+        // KYC / verification
+        kycStatus: {
+            type: String,
+            enum: ["not_started", "pending", "verified", "rejected"],
+            default: "not_started",
+        },
+        kycMethod: {
+            type: String,
+            enum: ["aadhaar", "passport", "none"],
+            default: "none",
+        },
+
+        // Aadhaar ko kabhi plain mat store karna, ya toh last4 ya hash
+        aadhaarLast4: String,
+        country: {
+            type: String,
+            default: "IN",
+        },
+
+        isEmailVerified: {
+            type: Boolean,
+            default: false,
+        },
+        isPhoneVerified: {
             type: Boolean,
             default: false,
         },
