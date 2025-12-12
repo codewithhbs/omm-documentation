@@ -14,7 +14,7 @@ RUN npm install --production
 COPY . .
 
 # Jo port tumhara app use karega
-EXPOSE 3000
+EXPOSE 4000
 
 # Container start hone par ye command chalegi
 CMD ["npm", "start"]

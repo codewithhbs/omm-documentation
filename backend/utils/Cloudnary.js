@@ -9,17 +9,37 @@ cloudinary.config({
     cloud_name: process.env.CLOUD_NAME
 });
 
-const uploadPDF = async (file) => {
+const uploadPDF = async (fileBuffer) => {
     try {
-        const pdf = await cloudinary.uploader.upload(file, {
-            folder: 'artists'
-        })
-        return { pdf: pdf.secure_url, public_id: pdf.public_id }
+        return new Promise((resolve, reject) => {
+            // Create upload stream for buffer
+            const uploadStream = cloudinary.uploader.upload_stream(
+                {
+                    folder: 'artists',
+                    resource_type: 'auto' // Handles both images and PDFs
+                },
+                (error, result) => {
+                    if (error) {
+                        console.error('Cloudinary upload error:', error);
+                        reject(error);
+                    } else {
+                        resolve({
+                            pdf: result.secure_url,
+                            public_id: result.public_id
+                        });
+                    }
+                }
+            );
+
+            // Convert buffer to stream and pipe to cloudinary
+            const bufferStream = require('stream').Readable.from(fileBuffer);
+            bufferStream.pipe(uploadStream);
+        });
     } catch (error) {
-        console.error(error)
+        console.error('Upload PDF error:', error);
         throw new Error('Failed to upload PDF');
     }
-}
+};
 
 const uploadPDFTwo = async (file) => {
     try {
@@ -71,7 +91,7 @@ const uploadVideo = async (file) => {
             resource_type: "video"
         });
         // return result.secure_url;
-        return {video:result.secure_url, public_id:result.public_id}
+        return { video: result.secure_url, public_id: result.public_id }
     } catch (error) {
         console.error(error);
         throw new Error('Failed to upload video');
@@ -82,7 +102,7 @@ const deleteVideoFromCloudinary = async (public_id) => {
     try {
         await cloudinary.uploader.destroy(public_id)
     } catch (error) {
-        console.error("Error deleting Video from Cloudinary:",error)
+        console.error("Error deleting Video from Cloudinary:", error)
         throw new Error('Failed to delete video from Cloudinary');
     }
 }

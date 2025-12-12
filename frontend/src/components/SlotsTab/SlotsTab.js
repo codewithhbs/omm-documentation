@@ -31,11 +31,11 @@ export default function SlotsTab() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <h2 className="text-2xl sm:text-3xl font-bold">Available Timeslots</h2>
+      <h2 className="text-2xl text-black sm:text-3xl font-bold">Available Timeslots</h2>
 
-      <div className="bg-white rounded-xl shadow border overflow-hidden">
+      <div className="bg-white rounded-xl shadow border border-black overflow-hidden">
         {/* Top info bar */}
-        <div className="p-4 sm:p-6 bg-gray-50 border-b">
+        <div className="p-4 sm:p-6 bg-gray-50 border-black border-b">
           <p className="text-sm sm:text-base text-gray-700">
             Below are the currently available timeslots for notary services.
           </p>
@@ -47,17 +47,17 @@ export default function SlotsTab() {
         <div className="md:hidden p-4 space-y-6">
           {/* Today section */} 
           <div>
-            <h3 className="text-[11px] font-semibold text-gray-500 mb-2">
+            <h3 className="text-[11px] font-semibold text-black mb-2">
               TODAY
             </h3>
             <div className="space-y-3">
               {today.map((slot, i) => (
                 <div
                   key={i}
-                  className="border rounded-lg p-3 flex flex-col gap-1 bg-white"
+                  className="border border-black rounded-lg p-3 flex flex-col gap-1 bg-white"
                 >
-                  <p className="text-xs text-gray-500">{slot.date}</p>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-xs text-black">{slot.date}</p>
+                  <p className="text-sm font-medium text-black">
                     {slot.time}
                   </p>
                   <div className="mt-1">
@@ -79,7 +79,7 @@ export default function SlotsTab() {
               {later.map((slot, i) => (
                 <div
                   key={i}
-                  className="border rounded-lg p-3 flex flex-col gap-1 bg-white"
+                  className="border border-black rounded-lg p-3 flex flex-col gap-1 bg-white"
                 >
                   <p className="text-xs text-gray-500">{slot.date}</p>
                   <p className="text-sm font-medium text-gray-900">
@@ -110,17 +110,17 @@ export default function SlotsTab() {
             </thead>
             <tbody className="text-sm">
               <tr className="bg-gray-100 font-semibold text-xs sm:text-sm">
-                <td colSpan={3} className="px-4 sm:px-6 py-2.5 sm:py-3">
+                <td colSpan={3} className="px-4 text-black sm:px-6 py-2.5 sm:py-3">
                   TODAY
                 </td>
               </tr>
               {today.map((slot, i) => (
                 <tr
                   key={i}
-                  className="border-b hover:bg-gray-50 text-xs sm:text-sm"
+                  className="border-b border-black hover:bg-gray-50 text-xs sm:text-sm"
                 >
-                  <td className="px-4 sm:px-6 py-3 sm:py-4">{slot.date}</td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4">{slot.time}</td>
+                  <td className="px-4 text-black sm:px-6 py-3 sm:py-4">{slot.date}</td>
+                  <td className="px-4 text-black sm:px-6 py-3 sm:py-4">{slot.time}</td>
                   <td className="px-4 sm:px-6 py-3 sm:py-4">
                     <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-[11px] sm:text-sm">
                       {slot.type}
@@ -129,17 +129,17 @@ export default function SlotsTab() {
                 </tr>
               ))}
               <tr className="bg-gray-100 font-semibold text-xs sm:text-sm">
-                <td colSpan={3} className="px-4 sm:px-6 py-2.5 sm:py-3">
+                <td colSpan={3} className="px-4 text-black sm:px-6 py-2.5 sm:py-3">
                   LATER
                 </td>
               </tr>
               {later.map((slot, i) => (
                 <tr
                   key={i}
-                  className="border-b hover:bg-gray-50 text-xs sm:text-sm"
+                  className="border-b border-black hover:bg-gray-50 text-xs sm:text-sm"
                 >
-                  <td className="px-4 sm:px-6 py-3 sm:py-4">{slot.date}</td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4">{slot.time}</td>
+                  <td className="px-4 text-black sm:px-6 py-3 sm:py-4">{slot.date}</td>
+                  <td className="px-4 text-black sm:px-6 py-3 sm:py-4">{slot.time}</td>
                   <td className="px-4 sm:px-6 py-3 sm:py-4">
                     <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-[11px] sm:text-sm">
                       {slot.type}

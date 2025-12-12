@@ -4,6 +4,37 @@ const router = express.Router();
 const authController = require("../controllers/authController");
 const { authenticateAccessToken } = require("../utils/jwtUtil");
 const rateLimiter = require("../middleware/rateLimiter");
+const multer = require('multer');
+
+const storage = multer.memoryStorage();
+
+const ALLOWED_FILE_TYPES = {
+  images: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'],
+  documents: ['application/pdf']
+};
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB
+    files: 5 // Maximum 5 files at once (optional)
+  },
+  fileFilter: (req, file, cb) => {
+    const allAllowedTypes = [
+      ...ALLOWED_FILE_TYPES.images,
+      ...ALLOWED_FILE_TYPES.documents
+    ];
+
+    if (allAllowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(
+        new Error('Only images (JPEG, PNG, GIF, WEBP) and PDF files are allowed!'),
+        false
+      );
+    }
+  }
+});
 
 router.post("/register", authController.register);
 
@@ -27,5 +58,6 @@ router.post("/logout", authController.logout);
 
 // Protected route
 router.get("/me", authenticateAccessToken, authController.me);
+router.put("/update_user_profile", authenticateAccessToken, upload.single('userIdImage'), authController.profileUpdate)
 
 module.exports = router;

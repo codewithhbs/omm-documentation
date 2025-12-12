@@ -5,7 +5,9 @@ const userSchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            trim: true,
+        },
+        familyName: {
+            type: String,
         },
         email: {
             type: String,
@@ -28,6 +30,27 @@ const userSchema = new mongoose.Schema(
             type: String,
             enum: ["user", "notary", "admin"],
             default: "user",
+        },
+        userName: {  // lowercase 'u'
+            type: String,
+            required: true,
+            unique: true,
+            trim: true
+        },
+        address: {
+            type: String,
+        },
+        country: {
+            type: String,
+            default: "IN",
+        },
+        userIdImage: {
+            pdf: {
+                type: String,
+            },
+            public_id: {
+                type: String,
+            },
         },
         // KYC / verification
         kycStatus: {
@@ -73,7 +96,11 @@ userSchema.pre("save", async function (next) {
 
 // ✅ instance method for password compare
 userSchema.methods.comparePassword = async function (plainPassword) {
-    return bcrypt.compare(plainPassword, this.password);
+    console.log('Candidate password type:', typeof plainPassword);
+    console.log('Stored password type:', typeof this.password);
+    console.log('Candidate password:', plainPassword ? 'exists' : 'missing');
+    console.log('Stored password:', this.password ? 'exists' : 'missing');
+    return await bcrypt.compare(plainPassword, this.password);
 };
 
 const User = mongoose.model("User", userSchema);

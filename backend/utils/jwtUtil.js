@@ -49,20 +49,17 @@ async function isRefreshTokenValid(jti) {
 
 // ✅ Access token verify middleware
 function authenticateAccessToken(req, res, next) {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies.accessToken; // ← cookie se lo
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!token) {
     return res.status(401).json({ success: false, message: "No token provided" });
   }
 
-  const token = authHeader.split(" ")[1];
-
   try {
     const decoded = jwt.verify(token, JWT_ACCESS_SECRET);
-    req.user = decoded; // req.user.sub = userId
+    req.user = decoded;
     next();
   } catch (err) {
-    console.error("JWT verify error:", err.message);
     return res.status(401).json({ success: false, message: "Invalid or expired token" });
   }
 }

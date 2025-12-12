@@ -38,7 +38,7 @@ export default function HomeTab() {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-8 sm:space-y-12"
     >
-      <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-12 text-center mb-6 sm:mb-12">
+      <div className="bg-linear-to-r from-indigo-50 to-blue-50 rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-12 text-center mb-6 sm:mb-12">
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-3 sm:mb-4">
           Welcome to Omm Documentation
         </h2>
@@ -66,7 +66,7 @@ export default function HomeTab() {
                 />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg sm:text-xl font-semibold mb-1 sm:mb-2">
+                <h3 className="text-lg text-black sm:text-xl font-semibold mb-1 sm:mb-2">
                   {action.title}
                 </h3>
                 <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">

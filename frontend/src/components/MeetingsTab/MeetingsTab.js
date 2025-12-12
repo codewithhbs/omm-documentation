@@ -4,7 +4,7 @@ export default function MeetingsTab({ openModal }) {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 sm:mb-8">
-        <h2 className="text-2xl sm:text-3xl font-bold">Meetings</h2>
+        <h2 className="text-2xl text-black sm:text-3xl font-bold">Meetings</h2>
         <button
           onClick={openModal}
           className="w-full sm:w-auto bg-indigo-600 text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-indigo-700 transition text-sm sm:text-base"
@@ -28,7 +28,7 @@ export default function MeetingsTab({ openModal }) {
             <div className="flex flex-col lg:flex-row gap-6 justify-between items-stretch lg:items-start">
               <div className="flex-1">
                 <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                  <h3 className="text-xl sm:text-2xl font-bold">Shivam</h3>
+                  <h3 className="text-xl text-black sm:text-2xl font-bold">Shivam</h3>
                   <span className="bg-yellow-100 text-yellow-800 px-3 sm:px-4 py-1 rounded-full text-xs sm:text-sm font-medium">
                     Pending
                   </span>
