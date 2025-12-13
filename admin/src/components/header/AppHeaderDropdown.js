@@ -28,7 +28,7 @@ import api from '../api/api'
 
 const AppHeaderDropdown = () => {
   const handleLogOut = async () => {
-    await api.post(`/api/auth/logout`);
+    await api.post(`https://api.ommdocumentation.com/api/auth/logout`);
     sessionStorage.removeItem('user');
     // router.push("/login");
     sessionStorage.clear();
