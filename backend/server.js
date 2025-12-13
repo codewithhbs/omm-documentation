@@ -15,7 +15,7 @@ connectDB();
 
 // Middleware - Configure CORS before other middleware
 app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:3001", "http://localhost:3007"], // Your frontend URL
+  origin: ["http://localhost:3000", "http://localhost:3001", "http://localhost:3007", "http://ommdocumentation.com", "http://www.ommdocumentation.com", "http://www.admin.ommdocumentation.com", "http://admin.ommdocumentation.com"], // Your frontend URL
   credentials: true, // Allow cookies if needed
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
