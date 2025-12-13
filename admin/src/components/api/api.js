@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "http://localhost:4000",
+    baseURL: "http://api.ommdocumentation.com",
     withCredentials: true,    // ← cookie jayegi har request mein
 });
 
@@ -18,7 +18,7 @@ api.interceptors.response.use(
             try {
                 console.log("i am up")
                 // Refresh token se naya accessToken le aao
-                await axios.get("http://localhost:4000/api/auth/refresh-token", {
+                await axios.get("http://api.ommdocumentation.com/api/auth/refresh-token", {
                     withCredentials: true
                 });
                 console.log("i am refresh frontend")
