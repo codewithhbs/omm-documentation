@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "https://api.ommdocumentation.com",
+    baseURL: "http://localhost:4000",
     withCredentials: true,    // ← cookie jayegi har request mein
 });
 
@@ -16,16 +16,16 @@ api.interceptors.response.use(
             originalRequest._retry = true;
 
             try {
-                console.log("i am up")
                 // Refresh token se naya accessToken le aao
-                await axios.get("https://api.ommdocumentation.com/api/auth/refresh-token", {
+                await axios.get("http://localhost:4000/api/auth/refresh-token", {
                     withCredentials: true
                 });
-                console.log("i am refresh frontend")
+
                 // Purani request dobara bhejo
                 return api(originalRequest);
             } catch (refreshError) {
                 // Refresh bhi fail → user ko logout ho gaya
+                // useAuthStore.getState().logout();
                 window.location.href = "/login";
             }
         }

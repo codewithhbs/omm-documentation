@@ -30,7 +30,7 @@ export default function Page() {
     setLoading(true);
 
     try {
-      const res = await api.post('https://api.ommdocumentation.com/api/auth/login', formData);
+      const res = await api.post('/api/auth/login', formData);
 
       if (res.data.success) {
         // Store user in sessionStorage and Zustand

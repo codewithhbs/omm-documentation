@@ -22,7 +22,7 @@ const ProfileUpdate = () => {
   // 🔹 Fetch logged-in user (SAFE)
   const fetchUser = async () => {
     try {
-      const res = await api.get("https://api.ommdocumentation.com/api/auth/me");
+      const res = await api.get("/api/auth/me");
       const user = res?.data?.user || {};
 
       setFormData({
@@ -86,7 +86,7 @@ const ProfileUpdate = () => {
         data.append("userIdImage", pdfFile);
       }
 
-      await api.put("https://api.ommdocumentation.com/api/auth/update_user_profile", data, {
+      await api.put("/api/auth/update_user_profile", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
