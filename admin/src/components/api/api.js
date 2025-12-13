@@ -1,6 +1,5 @@
 // utils/api.js
 import axios from "axios";
-import { useAuthStore } from "@/store/authStore";
 
 const api = axios.create({
     baseURL: "https://api.ommdocumentation.com/api",
@@ -26,7 +25,6 @@ api.interceptors.response.use(
                 // Retry original request
                 return api(originalRequest);
             } catch (refreshError) {
-                // useAuthStore.getState().logout();
                 window.location.href = "/login";
                 return Promise.reject(refreshError);
             }
