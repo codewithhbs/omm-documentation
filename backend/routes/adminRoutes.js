@@ -3,6 +3,12 @@ const router = express.Router();
 
 const { authenticateAccessToken, authorizeRoles } = require("../utils/jwtUtil");
 const User = require("../models/user.model");
+const authController = require("../controllers/authController");
+
+router.post(
+  "/admin-login",
+  authController.adminLogin
+)
 
 // 👇 Ye route sirf admin ke liye hai
 router.get(
@@ -23,5 +29,12 @@ router.get(
     }
   }
 );
+
+router.put(
+  "/userIdVerify/:id",
+  authenticateAccessToken,
+  authorizeRoles("admin"),
+  authController.verifyUserId
+)
 
 module.exports = router;

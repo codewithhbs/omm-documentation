@@ -8,6 +8,7 @@ import MeetingsTab from "@/components/MeetingsTab/MeetingsTab";
 import SlotsTab from "@/components/SlotsTab/SlotsTab";
 import HomeTab from "@/components/HomeTab/HomeTab";
 import api from "@/utils/api";
+import ProfileUpdate from "@/components/Profile/ProfileUpdate";
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState("home");
@@ -108,7 +109,7 @@ export default function Page() {
             </nav>
 
             <div className="border-t mt-4 pt-4 px-4 space-y-2">
-              <button className="w-full flex items-center gap-3 text-black px-4 py-3 rounded-lg hover:bg-gray-100 text-sm">
+              <button onClick={() => handleTabChange("profile")} className="w-full flex items-center gap-3 text-black px-4 py-3 rounded-lg hover:bg-gray-100 text-sm">
                 <User className="w-5 h-5" /> Profile
               </button>
               <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-red-600 text-sm">
@@ -153,7 +154,7 @@ export default function Page() {
             </button>
           </nav>
           <div className="border-t mt-6 pt-4 px-4 space-y-2">
-            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-black hover:bg-gray-100">
+            <button onClick={() => handleTabChange("profile")} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-black hover:bg-gray-100">
               <User className="w-5 h-5" /> Profile
             </button>
             <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-red-600">
@@ -231,6 +232,7 @@ export default function Page() {
               <MeetingsTab openModal={() => setModalOpen(true)} />
             )}
             {activeTab === "slots" && <SlotsTab />}
+            {activeTab === "profile" && <ProfileUpdate />}
           </main>
         </div>
       </div>

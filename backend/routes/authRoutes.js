@@ -53,8 +53,9 @@ router.post(
   authController.login
 );
 
-router.post("/refresh-token", authController.refreshToken);
+router.get("/refresh-token", authController.refreshToken);
 router.post("/logout", authController.logout);
+
 
 // Protected route
 router.get("/me", authenticateAccessToken, authController.me);

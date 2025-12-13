@@ -52,6 +52,10 @@ const userSchema = new mongoose.Schema(
                 type: String,
             },
         },
+        userIdImageVerify: {
+            type: Boolean,
+            default: false,
+        },
         // KYC / verification
         kycStatus: {
             type: String,

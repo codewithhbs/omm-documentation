@@ -1,5 +1,5 @@
 const User = require("../models/user.model");
-const { uploadPDF,deletePdfFromCloudinary } = require("../utils/Cloudnary");
+const { uploadPDF, deletePdfFromCloudinary } = require("../utils/Cloudnary");
 const {
     signAccessToken,
     signRefreshToken,
@@ -337,7 +337,7 @@ async function profileUpdate(req, res) {
             // Upload new file using buffer
             const imageUrl = await uploadPDF(req.file.buffer);
             const { pdf, public_id } = imageUrl;
-            
+
             user.userIdImage = {
                 pdf: pdf,
                 public_id: public_id
@@ -360,8 +360,8 @@ async function profileUpdate(req, res) {
             role: user.role
         };
 
-        res.status(200).json({ 
-            success: true, 
+        res.status(200).json({
+            success: true,
             user: safeUser,
             message: "Profile updated successfully"
         });
@@ -374,11 +374,124 @@ async function profileUpdate(req, res) {
     }
 }
 
+async function verifyUserId(req, res) {
+    try {
+        const { id } = req.params;
+        const { userIdImageVerify } = req.body;
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+        user.userIdImageVerify = userIdImageVerify;
+        await user.save();
+
+        res.status(200).json({ success: true, message: "User verification updated successfully" });
+    } catch (error) {
+        console.log("Internal server error", error)
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
+}
+
+async function adminLogin(req, res) {
+    try {
+        const { email, password } = req.body;
+        console.log("body", email)
+
+        if (!email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: "email and password are required",
+            });
+        }
+        console.log(
+            "i am befor check"
+        )
+
+        // password field by default select: false hai, isliye +password
+        const user = await User.findOne({ email }).select("+password");
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid credentials",
+            });
+        }
+
+        console.log(
+            "i am after check"
+        )
+
+        if (user.role !== "admin") {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid credentials",
+            });
+        }
+
+        console.log(
+            "i am befor password"
+        )
+
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                message: "Wrong password",
+            });
+        }
+
+        console.log(
+            "i am after password"
+        )
+
+        const safeUser = {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            userName: user.userName,
+        };
+
+        const accessToken = signAccessToken(safeUser);
+        const { token: refreshToken, jti } = await signRefreshToken(user._id);
+
+        res.cookie("accessToken", accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 15 * 60 * 1000, // 15 minutes
+        });
+
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        });
+
+        res.status(201).json({
+            success: true,
+            user: safeUser,
+            // accessToken,
+            // refreshToken,
+            sessionId: jti,
+        })
+    } catch (err) {
+        console.error("Login error:", err);
+        res.status(500).json({ success: false, message: "Server error during login" });
+    }
+}
+
+// admin-login
 module.exports = {
     register,
     login,
     refreshToken,
     logout,
     me,
-    profileUpdate
+    profileUpdate,
+    verifyUserId,
+    adminLogin
 };
