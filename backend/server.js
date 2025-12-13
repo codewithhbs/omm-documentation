@@ -27,25 +27,20 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (Postman, curl, mobile apps, etc.)
-      if (!origin) {
-        return callback(null, true);
-      }
-
+      if (!origin) return callback(null, true);
       if (allowedOrigins.includes(origin)) {
-        return callback(null, origin); // Return exact origin
+        return callback(null, origin);
       }
-
       return callback(new Error("Not allowed by CORS"));
     },
-    credentials: true,                    // Important for cookies
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-// Extra: Handle preflight requests explicitly (recommended)
-app.options("*", cors());
+// ❌ YE LINE HTA DO (main culprit)
+// app.options("*", cors());
 
 // 🔹 Middlewares
 app.use(express.json());
@@ -60,7 +55,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 
-// 🔹 Global error handler (optional but good practice)
+// 🔹 Global error handler (optional)
 app.use((err, req, res, next) => {
   if (err.message === "Not allowed by CORS") {
     return res.status(403).json({ success: false, message: "CORS policy violation" });
