@@ -23,26 +23,29 @@ const allowedOrigins = [
   "https://www.admin.ommdocumentation.com",
 ];
 
+// 🔹 CORS Configuration (FIXED)
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow non-browser tools (Postman, curl)
+      // Allow requests with no origin (Postman, curl, mobile apps, etc.)
       if (!origin) {
-        return callback(null, false); // 🔴 CHANGE HERE
+        return callback(null, true);
       }
 
       if (allowedOrigins.includes(origin)) {
-        return callback(null, origin); // ✅ explicit origin
+        return callback(null, origin); // Return exact origin
       }
 
       return callback(new Error("Not allowed by CORS"));
     },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,                    // Important for cookies
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
+// Extra: Handle preflight requests explicitly (recommended)
+app.options("*", cors());
 
 // 🔹 Middlewares
 app.use(express.json());
@@ -56,6 +59,15 @@ app.get("/", (req, res) => {
 // 🔹 Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
+
+// 🔹 Global error handler (optional but good practice)
+app.use((err, req, res, next) => {
+  if (err.message === "Not allowed by CORS") {
+    return res.status(403).json({ success: false, message: "CORS policy violation" });
+  }
+  console.error(err);
+  res.status(500).json({ success: false, message: "Server Error" });
+});
 
 // 🔹 Start server
 app.listen(PORT, () => {
