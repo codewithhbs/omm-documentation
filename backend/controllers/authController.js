@@ -461,16 +461,16 @@ async function adminLogin(req, res) {
 
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-    secure: true,          // 🔥 REQUIRED for HTTPS
-    sameSite: "none",      // 🔥 REQUIRED for cross-domain
-    maxAge: 15 * 60 * 1000, // 15 minutes
+            secure: true,          // 🔥 REQUIRED for HTTPS
+            sameSite: "none",      // 🔥 REQUIRED for cross-domain
+            maxAge: 15 * 60 * 1000, // 15 minutes
         });
 
         res.cookie("refreshToken", refreshToken, {
-             httpOnly: true,
-    secure: true,          // 🔥 REQUIRED
-    sameSite: "none",      // 🔥 REQUIRED
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            httpOnly: true,
+            secure: true,          // 🔥 REQUIRED
+            sameSite: "none",      // 🔥 REQUIRED
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
 
         res.status(201).json({

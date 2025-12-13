@@ -13,7 +13,6 @@ const PORT = process.env.PORT || 4000;
 // 🔹 DB connect
 connectDB();
 
-// 🔹 Allowed origins
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
@@ -24,24 +23,26 @@ const allowedOrigins = [
   "https://www.admin.ommdocumentation.com",
 ];
 
-// 🔹 CORS CONFIG (PRODUCTION SAFE)
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // allow non-browser requests (postman, curl)
-      if (!origin) return callback(null, true);
+    origin: (origin, callback) => {
+      // Allow non-browser tools (Postman, curl)
+      if (!origin) {
+        return callback(null, false); // 🔴 CHANGE HERE
+      }
 
       if (allowedOrigins.includes(origin)) {
-        return callback(null, origin); // ✅ IMPORTANT
-      } else {
-        return callback(new Error("Not allowed by CORS"));
+        return callback(null, origin); // ✅ explicit origin
       }
+
+      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 
 // 🔹 Middlewares
 app.use(express.json());
