@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 4000;
 // 🔹 DB connect
 connectDB();
 
-// 🔹 Allowed origins (IMPORTANT)
+// 🔹 Allowed origins
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
@@ -28,31 +28,26 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (Postman, curl, server-to-server)
+      // allow non-browser requests (postman, curl)
       if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
-        return callback(null, origin); // ✅ NOT "*"
+        return callback(null, origin); // ✅ IMPORTANT
       } else {
-        return callback(
-          new Error("CORS not allowed for this origin")
-        );
+        return callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true, // 🔥 REQUIRED for cookies
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-// 🔹 Handle preflight requests explicitly
-app.options("*", cors());
-
-// 🔹 Other middlewares
+// 🔹 Middlewares
 app.use(express.json());
 app.use(cookieParser());
 
-// 🔹 Test route
+// 🔹 Health check
 app.get("/", (req, res) => {
   res.send("API is running 🚀");
 });
