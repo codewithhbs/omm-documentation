@@ -66,18 +66,17 @@ async function register(req, res) {
 
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            secure: true,          // 🔥 REQUIRED for HTTPS
-            sameSite: "none",      // 🔥 REQUIRED for cross-domain
-            maxAge: 15 * 60 * 1000, // 15 minutes
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 15 * 60 * 1000,
         });
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: true,          // 🔥 REQUIRED
-            sameSite: "none",      // 🔥 REQUIRED
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
         });
-
 
         res.status(201).json({
             success: true,
@@ -159,18 +158,17 @@ async function login(req, res) {
 
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            secure: true,          // 🔥 REQUIRED for HTTPS
-            sameSite: "none",      // 🔥 REQUIRED for cross-domain
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
             maxAge: 15 * 60 * 1000, // 15 minutes
         });
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: true,          // 🔥 REQUIRED
-            sameSite: "none",      // 🔥 REQUIRED
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
-
 
         res.status(201).json({
             success: true,
@@ -241,8 +239,8 @@ async function refreshToken(req, res) {
         // 6. Naya access token cookie mein set kar do (15 min ka)
         res.cookie("accessToken", newAccessToken, {
             httpOnly: true,
-            secure: true,          // 🔥 REQUIRED for HTTPS
-            sameSite: "none",      // 🔥 REQUIRED for cross-domain
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
             maxAge: 15 * 60 * 1000, // 15 minutes
         });
 
@@ -461,16 +459,16 @@ async function adminLogin(req, res) {
 
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-    secure: true,          // 🔥 REQUIRED for HTTPS
-    sameSite: "none",      // 🔥 REQUIRED for cross-domain
-    maxAge: 15 * 60 * 1000, // 15 minutes
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 15 * 60 * 1000, // 15 minutes
         });
 
         res.cookie("refreshToken", refreshToken, {
-             httpOnly: true,
-    secure: true,          // 🔥 REQUIRED
-    sameSite: "none",      // 🔥 REQUIRED
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
 
         res.status(201).json({
