@@ -23,24 +23,28 @@ const allowedOrigins = [
   "https://www.admin.ommdocumentation.com",
 ];
 
-// 🔹 CORS Configuration (FIXED)
+// 🔹 CORS Configuration (PROPER FIX)
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, origin);
+      // Non-browser requests (Postman, curl) → allow with wildcard (*)
+      if (!origin) {
+        return callback(null, true);
       }
+
+      // Browser requests → check whitelist and reflect exact origin
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, origin);  // ✅ Exact origin set
+      }
+
+      // Not allowed
       return callback(new Error("Not allowed by CORS"));
     },
-    credentials: true,
+    credentials: true,  // Cookies ke liye zaruri
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
-// ❌ YE LINE HTA DO (main culprit)
-// app.options("*", cors());
 
 // 🔹 Middlewares
 app.use(express.json());
