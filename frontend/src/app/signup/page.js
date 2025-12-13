@@ -50,7 +50,7 @@ export default function Page() {
     setLoading(true);
 
     try {
-      const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://api.ommdocumentation.com";
+      const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.ommdocumentation.com";
 
       const payload = {
         name: formData.name,
