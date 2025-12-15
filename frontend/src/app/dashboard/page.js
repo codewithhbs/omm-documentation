@@ -41,17 +41,23 @@ export default function Page() {
   };
 
   const logout = async () => {
-    // console.log("i am hit")
-    const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL
-    const data = await api.post(`${API_BASE}/api/auth/logout`);
-    if (data.data.success) {
+    try {
+      const refreshToken = localStorage.getItem("refreshToken");
+
+      await api.post("/api/auth/logout", {
+        refreshToken,
+      });
+    } catch (err) {
+      console.warn("Logout API failed, forcing logout");
+    } finally {
+      // 🔥 Always clear client state
       localStorage.removeItem("user");
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("sessionId");
+
       window.location.href = "/login";
     }
-    // router.push("/login");
   };
 
   return (

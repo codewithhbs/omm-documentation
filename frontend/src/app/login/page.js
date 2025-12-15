@@ -59,8 +59,9 @@ export default function Page() {
       }
     } catch (error) {
       const message = error.response?.data?.message || 'Login failed. Please try again.';
-      setError(message);
-      console.error('Login error:', error);
+      // setError(message);
+      toast.error(message);
+      console.logs('Login error:', error);
     } finally {
       setLoading(false);
     }
