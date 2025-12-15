@@ -50,7 +50,7 @@ async function isRefreshTokenValid(jti) {
 // ✅ Access token verify middleware
 function authenticateAccessToken(req, res, next) {
   const token = req.cookies.accessToken; // ← cookie se lo
-
+console.log("auth", token)
   if (!token) {
     return res.status(401).json({ success: false, message: "No token provided" });
   }

@@ -267,6 +267,7 @@ async function refreshToken(req, res) {
 async function logout(req, res) {
     try {
         const refreshToken = req.cookies.refreshToken;
+        console.log("refreshToken",refreshToken)
 
         if (refreshToken) {
             try {
@@ -291,6 +292,7 @@ async function logout(req, res) {
 async function me(req, res) {
     try {
         const userId = req.user?.sub;
+        console.log("userId",userId)
 
         const user = await User.findById(userId);
         if (!user) {
