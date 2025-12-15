@@ -34,7 +34,7 @@ export default function Page() {
     setLoading(true);
 
     try {
-      const res = await axios.post(`${API_BASE}/api/auth/login`, formData);
+      const res = await axios.post(`https://www.api.ommdocumentation.com/api/auth/login`, formData);
 
       if (res.data.success) {
         const { user, accessToken, refreshToken, sessionId } = res.data;
