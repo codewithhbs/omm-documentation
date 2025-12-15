@@ -14,12 +14,31 @@ const PORT = process.env.PORT || 4000;
 connectDB();
 
 // Middleware - Configure CORS before other middleware
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:3007",
+  "https://ommdocumentation.com",
+  "https://www.ommdocumentation.com",
+  "https://admin.ommdocumentation.com",
+  "https://www.admin.ommdocumentation.com",
+];
+
 app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:3001", "http://localhost:3007", "https://ommdocumentation.com", "https://www.ommdocumentation.com", "https://www.admin.ommdocumentation.com", "https://admin.ommdocumentation.com"], // Your frontend URL
-  credentials: true, // Allow cookies if needed
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, origin); // 👈 IMPORTANT (no *)
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
+
 
 app.use(express.json());
 app.use(cookieParser());

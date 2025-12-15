@@ -19,7 +19,8 @@ export default function Page() {
   const [user, setUser] = useState({});
 
   useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = JSON.parse(localStorage.getItem('user'));
     if (!user) {
       // sessionStorage.removeItem('user');
       window.location.href = "/login";
@@ -42,10 +43,15 @@ export default function Page() {
   const logout = async () => {
     // console.log("i am hit")
     const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL
-    await api.post(`${API_BASE}/api/auth/logout`);
-    sessionStorage.removeItem('user');
+    const data = await api.post(`${API_BASE}/api/auth/logout`);
+    if (data.data.success) {
+      localStorage.removeItem("user");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("sessionId");
+      window.location.href = "/login";
+    }
     // router.push("/login");
-    window.location.href = "/login";
   };
 
   return (

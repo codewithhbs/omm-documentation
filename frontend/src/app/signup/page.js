@@ -50,7 +50,7 @@ export default function Page() {
     setLoading(true);
 
     try {
-      const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
+      // const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
       const payload = {
         name: formData.name,
@@ -63,22 +63,27 @@ export default function Page() {
       };
 
       // NOTE: not using withCredentials because you're not using cookies right now
-      const res = await axios.post(`${API_BASE}/api/auth/register`, payload, {
+      const res = await axios.post(`/api/auth/register`, payload, {
         timeout: 15000,
       });
 
       if (res?.data?.success) {
-        // store user as JSON in sessionStorage (cleared when tab/window closes)
+        const { user, accessToken, refreshToken, sessionId } = res.data;
+
+        // 🔐 Store in localStorage
         try {
-          sessionStorage.setItem("user", JSON.stringify(res.data.user));
+          localStorage.setItem("user", JSON.stringify(user));
+          localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("refreshToken", refreshToken);
+          localStorage.setItem("sessionId", sessionId);
         } catch (err) {
-          // storage might fail in very restricted environments — still continue
-          console.warn("Could not store user in sessionStorage:", err);
+          console.warn("LocalStorage error:", err);
         }
 
-        toast.success("Account created successfully! Redirecting...", { autoClose: 1800 });
+        toast.success("Account created successfully! Redirecting...", {
+          autoClose: 1800,
+        });
 
-        // small delay so user sees toast
         setTimeout(() => {
           router.push("/dashboard");
         }, 1400);

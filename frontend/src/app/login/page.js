@@ -6,6 +6,8 @@ import { Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import api from '@/utils/api';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 // import { useAuthStore } from '@/stores/authStore';
 
 export default function Page() {
@@ -24,21 +26,36 @@ export default function Page() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      const res = await api.post('/api/auth/login', formData);
+      const res = await axios.post(`${API_BASE}/api/auth/login`, formData);
 
       if (res.data.success) {
-        // Store user in sessionStorage and Zustand
-        sessionStorage.setItem('user', JSON.stringify(res.data.user));
-        // setUser(res.data.user);
+        const { user, accessToken, refreshToken, sessionId } = res.data;
 
-        // Redirect to dashboard
-        router.push('/dashboard');
+        // 🔐 Store in localStorage
+        try {
+          localStorage.setItem("user", JSON.stringify(user));
+          localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("refreshToken", refreshToken);
+          localStorage.setItem("sessionId", sessionId);
+        } catch (err) {
+          console.warn("LocalStorage error:", err);
+        }
+
+        toast.success("Account created successfully! Redirecting...", {
+          autoClose: 1800,
+        });
+
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 1400);
       }
     } catch (error) {
       const message = error.response?.data?.message || 'Login failed. Please try again.';
@@ -113,9 +130,8 @@ export default function Page() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full bg-linear-to-r from-indigo-600 to-blue-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-indigo-700 hover:to-blue-700 transition shadow-lg flex items-center justify-center gap-3 ${
-                loading ? 'opacity-70 cursor-not-allowed' : ''
-              }`}
+              className={`w-full bg-linear-to-r from-indigo-600 to-blue-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-indigo-700 hover:to-blue-700 transition shadow-lg flex items-center justify-center gap-3 ${loading ? 'opacity-70 cursor-not-allowed' : ''
+                }`}
             >
               {loading ? 'Signing In...' : 'Sign In'}
               {!loading && <ArrowRight className="w-5 h-5" />}

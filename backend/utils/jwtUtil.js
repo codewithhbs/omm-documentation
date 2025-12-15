@@ -1,15 +1,18 @@
 const jwt = require("jsonwebtoken");
 const redis = require("./redisClient");
 
-const ACCESS_TOKEN_TTL = "15m";              // JWT ka expire time
-const REFRESH_TOKEN_TTL_SECONDS = 60 * 60 * 24 * 7; // 7 din
+const ACCESS_TOKEN_TTL = "15m";
+const REFRESH_TOKEN_TTL_SECONDS = 60 * 60 * 24 * 7; // 7 days
 
-const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || "dev-access-secret";
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "dev-refresh-secret";
+const JWT_ACCESS_SECRET =
+  process.env.JWT_ACCESS_SECRET || "dev-access-secret";
+const JWT_REFRESH_SECRET =
+  process.env.JWT_REFRESH_SECRET || "dev-refresh-secret";
 
-// ✅ Access token banane ka helper
+/* =========================
+   ACCESS TOKEN
+========================= */
 function signAccessToken(user) {
-  // user: {_id, email, role, ...}
   const payload = {
     sub: user._id?.toString() || user.id,
     email: user.email,
@@ -21,53 +24,75 @@ function signAccessToken(user) {
   });
 }
 
-// ✅ Refresh token banane ka helper + Redis me store
+/* =========================
+   REFRESH TOKEN + REDIS
+========================= */
 async function signRefreshToken(userId) {
-  const jti = `sess:${userId}:${Date.now()}`; // unique id
+  const jti = `sess:${userId}:${Date.now()}`;
   const payload = { sub: userId, jti };
 
   const token = jwt.sign(payload, JWT_REFRESH_SECRET, {
     expiresIn: REFRESH_TOKEN_TTL_SECONDS,
   });
 
-  // Redis me session store karo
-  await redis.set(`refresh:${jti}`, userId.toString(), "EX", REFRESH_TOKEN_TTL_SECONDS);
+  await redis.set(
+    `refresh:${jti}`,
+    userId.toString(),
+    "EX",
+    REFRESH_TOKEN_TTL_SECONDS
+  );
 
   return { token, jti };
 }
 
-// ✅ Refresh token ko invalidate (logout)
+/* =========================
+   INVALIDATE REFRESH TOKEN
+========================= */
 async function invalidateRefreshToken(jti) {
   await redis.del(`refresh:${jti}`);
 }
 
-// ✅ Refresh token valid hai ya nahi (Redis se check)
+/* =========================
+   CHECK REFRESH TOKEN
+========================= */
 async function isRefreshTokenValid(jti) {
   const userId = await redis.get(`refresh:${jti}`);
   return !!userId;
 }
 
-// ✅ Access token verify middleware
+/* =========================
+   AUTH MIDDLEWARE (HEADER)
+========================= */
 function authenticateAccessToken(req, res, next) {
-  const token = req.cookies.accessToken; // ← cookie se lo
-console.log("auth", token)
-  if (!token) {
-    return res.status(401).json({ success: false, message: "No token provided" });
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({
+      success: false,
+      message: "Authorization token missing",
+    });
   }
+
+  const token = authHeader.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, JWT_ACCESS_SECRET);
     req.user = decoded;
     next();
   } catch (err) {
-    return res.status(401).json({ success: false, message: "Invalid or expired token" });
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired token",
+    });
   }
 }
 
-// ---- Role-based authorization middleware ----
+/* =========================
+   ROLE AUTHORIZATION
+========================= */
 function authorizeRoles(...allowedRoles) {
   return (req, res, next) => {
-    if (!req.user || !req.user.role) {
+    if (!req.user?.role) {
       return res.status(403).json({
         success: false,
         message: "Access denied. No role found.",
@@ -84,7 +109,6 @@ function authorizeRoles(...allowedRoles) {
     next();
   };
 }
-
 
 module.exports = {
   signAccessToken,

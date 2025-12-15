@@ -11,7 +11,7 @@ const jwt = require("jsonwebtoken");
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "dev-refresh-secret";
 
 // ✅ Register / Signup
-// POST /api/auth/register
+// POST /api/auth/register 
 async function register(req, res) {
     try {
         console.log("i am hit")
@@ -64,25 +64,27 @@ async function register(req, res) {
         const accessToken = signAccessToken(safeUser);
         const { token: refreshToken, jti } = await signRefreshToken(user._id);
 
-        res.cookie("accessToken", accessToken, {
-            httpOnly: true,
-            secure: true,          // 🔥 REQUIRED for HTTPS
-            sameSite: "none",      // 🔥 REQUIRED for cross-domain
-            maxAge: 15 * 60 * 1000, // 15 minutes
-        });
+        // res.cookie("accessToken", accessToken, {
+        //     httpOnly: true,
+        //     secure: true,          // 🔥 REQUIRED for HTTPS
+        //     sameSite: "none",      // 🔥 REQUIRED for cross-domain
+        //     maxAge: 15 * 60 * 1000, // 15 minutes
+        // });
 
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: true,          // 🔥 REQUIRED
-            sameSite: "none",      // 🔥 REQUIRED
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-        });
+        // res.cookie("refreshToken", refreshToken, {
+        //     httpOnly: true,
+        //     secure: true,          // 🔥 REQUIRED
+        //     sameSite: "none",      // 🔥 REQUIRED
+        //     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        // });
 
 
         res.status(201).json({
             success: true,
             user: safeUser,
-            // sessionId: jti,
+            sessionId: jti,
+            accessToken,
+            refreshToken
         });
     } catch (err) {
         console.error("Register error:", err);
@@ -157,26 +159,26 @@ async function login(req, res) {
         const accessToken = signAccessToken(safeUser);
         const { token: refreshToken, jti } = await signRefreshToken(user._id);
 
-        res.cookie("accessToken", accessToken, {
-            httpOnly: true,
-            secure: true,          // 🔥 REQUIRED for HTTPS
-            sameSite: "none",      // 🔥 REQUIRED for cross-domain
-            maxAge: 15 * 60 * 1000, // 15 minutes
-        });
+        // res.cookie("accessToken", accessToken, {
+        //     httpOnly: true,
+        //     secure: true,          // 🔥 REQUIRED for HTTPS
+        //     sameSite: "none",      // 🔥 REQUIRED for cross-domain
+        //     maxAge: 15 * 60 * 1000, // 15 minutes
+        // });
 
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: true,          // 🔥 REQUIRED
-            sameSite: "none",      // 🔥 REQUIRED
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-        });
+        // res.cookie("refreshToken", refreshToken, {
+        //     httpOnly: true,
+        //     secure: true,          // 🔥 REQUIRED
+        //     sameSite: "none",      // 🔥 REQUIRED
+        //     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        // });
 
 
         res.status(201).json({
             success: true,
             user: safeUser,
-            // accessToken,
-            // refreshToken,
+            accessToken,
+            refreshToken,
             sessionId: jti,
         })
     } catch (err) {
@@ -187,103 +189,123 @@ async function login(req, res) {
 
 // ✅ Refresh token
 async function refreshToken(req, res) {
-    try {
-        console.log("i am here for refresh token")
-        // 1. Refresh token cookie se lo (frontend se nahi bhejna padta)
-        const refreshToken = req.cookies.refreshToken;
+  try {
+    console.log("🔄 Refresh token hit");
 
-        if (!refreshToken) {
-            return res.status(401).json({
-                success: false,
-                message: "Refresh token missing",
-            });
-        }
+    // 1️⃣ Refresh token body ya header se lo
+    const refreshToken =
+      req.body.refreshToken || req.headers["x-refresh-token"];
 
-        // 2. JWT verify karo
-        let decoded = null;
-        try {
-            decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-        } catch (err) {
-            // Token expired ya invalid
-            return res.status(403).json({
-                success: false,
-                message: "Invalid or expired refresh token",
-            });
-        }
-
-        const { sub: userId, jti } = decoded;
-
-        // 3. Redis mein check karo ki ye refresh token abhi bhi valid hai (logout nahi hua)
-        const isValid = await isRefreshTokenValid(jti);
-        if (!isValid) {
-            return res.status(403).json({
-                success: false,
-                message: "Refresh token revoked (logged out from another device?)",
-            });
-        }
-
-        // 4. User ko database se lao (optional – agar latest role/avatar chahiye)
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ success: false, message: "User not found" });
-        }
-
-        // 5. Naya access token banao
-        const safeUser = {
-            _id: user._id,
-            email: user.email,
-            name: user.name,
-            role: user.role || "user",
-        };
-
-        const newAccessToken = signAccessToken(safeUser);
-
-        // 6. Naya access token cookie mein set kar do (15 min ka)
-        res.cookie("accessToken", newAccessToken, {
-            httpOnly: true,
-            secure: true,          // 🔥 REQUIRED for HTTPS
-            sameSite: "none",      // 🔥 REQUIRED for cross-domain
-            maxAge: 15 * 60 * 1000, // 15 minutes
-        });
-
-        // 7. Success response (koi token JSON mein nahi bhej rahe!)
-        return res.json({
-            success: true,
-            message: "Token refreshed successfully",
-            // user: safeUser   ← optional, agar frontend ko latest data chahiye
-        });
-
-    } catch (error) {
-        console.error("Refresh token error:", error);
-        return res.status(500).json({
-            success: false,
-            message: "Server error during token refresh",
-        });
+    if (!refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: "Refresh token missing",
+      });
     }
+
+    // 2️⃣ JWT verify
+    let decoded;
+    try {
+      decoded = jwt.verify(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET
+      );
+    } catch (err) {
+      return res.status(403).json({
+        success: false,
+        message: "Invalid or expired refresh token",
+      });
+    }
+
+    const { sub: userId, jti } = decoded;
+
+    // 3️⃣ Redis me validity check
+    const isValid = await isRefreshTokenValid(jti);
+    if (!isValid) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Refresh token revoked (logged out from another device?)",
+      });
+    }
+
+    // 4️⃣ User fetch (optional but recommended)
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // 5️⃣ Safe payload
+    const safeUser = {
+      _id: user._id,
+      email: user.email,
+      role: user.role || "user",
+    };
+
+    // 6️⃣ New access token
+    const newAccessToken = signAccessToken(safeUser);
+
+    // 7️⃣ JSON response (frontend store karega)
+    return res.status(200).json({
+      success: true,
+      message: "Token refreshed successfully",
+      accessToken: newAccessToken,
+      user: safeUser, // optional
+    });
+
+  } catch (error) {
+    console.error("❌ Refresh token error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error during token refresh",
+    });
+  }
 }
 
 // ✅ Logout
 // POST /api/auth/logout
 async function logout(req, res) {
     try {
-        const refreshToken = req.cookies.refreshToken;
-        console.log("refreshToken",refreshToken)
+        // 1️⃣ refreshToken body ya header se lo
+        const refreshToken =
+            req.body.refreshToken ||
+            req.headers["x-refresh-token"];
 
-        if (refreshToken) {
-            try {
-                const decoded = jwt.verify(refreshToken, JWT_REFRESH_SECRET);
-                await invalidateRefreshToken(decoded.jti); // ← Redis se hata do
-            } catch (err) {
-                // ignore expired token
-            }
+        if (!refreshToken) {
+            return res.status(200).json({
+                success: true,
+                message: "Logged out (no refresh token found)",
+            });
         }
 
-        res.clearCookie("accessToken");
-        res.clearCookie("refreshToken");
-        res.status(200).json({ success: true });
+        try {
+            // 2️⃣ Verify refresh token
+            const decoded = jwt.verify(
+                refreshToken,
+                process.env.JWT_REFRESH_SECRET
+            );
+
+            // 3️⃣ Redis / DB se invalidate
+            await invalidateRefreshToken(decoded.jti);
+        } catch (err) {
+            // token expired / invalid → ignore
+            console.warn("Refresh token invalid or expired");
+        }
+
+        // 4️⃣ Client-side clear karega
+        return res.status(200).json({
+            success: true,
+            message: "Logged out successfully",
+        });
     } catch (err) {
         console.error("Logout error:", err);
-        res.status(500).json({ success: false, message: "Server error during logout" });
+        return res.status(500).json({
+            success: false,
+            message: "Server error during logout",
+        });
     }
 }
 
@@ -292,7 +314,7 @@ async function logout(req, res) {
 async function me(req, res) {
     try {
         const userId = req.user?.sub;
-        console.log("userId",userId)
+        console.log("userId", userId)
 
         const user = await User.findById(userId);
         if (!user) {
