@@ -1,6 +1,7 @@
-require("dotenv").config();
 const { google } = require("googleapis");
 const readline = require("readline");
+
+require("dotenv").config();
 
 const oAuth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
@@ -12,11 +13,11 @@ const SCOPES = ["https://www.googleapis.com/auth/calendar"];
 
 const authUrl = oAuth2Client.generateAuthUrl({
   access_type: "offline",
-  prompt: "consent",   // 🔥 Must for refresh token
+  prompt: "consent", // ⭐ MUST
   scope: SCOPES,
 });
 
-console.log("\n🔗 Open this URL in browser:\n");
+console.log("\nAuthorize this app by visiting this url:\n");
 console.log(authUrl);
 
 const rl = readline.createInterface({
@@ -24,23 +25,16 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-rl.question("\nPaste authorization code here: ", async (code) => {
+rl.question("\nEnter the code from that page here: ", async (code) => {
   try {
     const { tokens } = await oAuth2Client.getToken(code);
 
-    console.log("\n✅ TOKENS RECEIVED:\n");
-    console.log(tokens);
-
-    if (tokens.refresh_token) {
-      console.log("\n🔥 SAVE THIS REFRESH TOKEN:\n");
-      console.log(tokens.refresh_token);
-    } else {
-      console.log("\n⚠️ No refresh token received. Revoke app and try again.");
-    }
+    console.log("\nTOKENS RECEIVED:\n", tokens);
+    console.log("\n✅ REFRESH TOKEN (SAVE THIS):\n", tokens.refresh_token);
 
     rl.close();
   } catch (err) {
-    console.error("\n❌ Error getting token:", err.message);
+    console.error("Error getting token:", err.message);
     rl.close();
   }
 });
