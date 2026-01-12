@@ -1,28 +1,10 @@
 import React from 'react'
-import AllTestimonial from './views/Testimonial/AllTestimonial'
-import AddTestimonial from './views/Testimonial/AddTestimonial'
-import EditTestimonial from './views/Testimonial/EditTestimonial'
-import AllBlogs from './views/Blogs/AllBlogs'
-import AddBlogs from './views/Blogs/AddBlogs'
-import EditBlogs from './views/Blogs/EditBlogs'
-import AllCity from './views/City/AllCity'
-import AddCity from './views/City/AddCity'
-import EditCity from './views/City/EditCity'
-import AddPropertyType from './views/PropertyType/AddPropertyType'
-import EditPropertyType from './views/PropertyType/EditPropertyType'
-import AllPropertyType from './views/PropertyType/AllPropertyType'
-import AddProperty from './views/Property/AddProperty'
-import EditProperty from './views/Property/EditProperty'
-import AllProperty from './views/Property/AllProperty'
-import AllPropertyInquiry from './views/PropertyInquery/AllPropertyInquery'
-import AllInquiry from './views/Inquiry/AllInquiry'
-import Distributor from './views/Form/Distributor'
-import Manufacturer from './views/Form/Manufacturer'
-import Retailer from './views/Form/Retailer'
-import AllNewsRoom from './views/NewsRoom/AllNewsRoom'
-import CreateNewsRoom from './views/NewsRoom/CreateNewsRoom'
-import EditNewsRoom from './views/NewsRoom/EditNewsRoom'
 import AllUser from './views/AllUser/AllUser'
+import AllAdvocate from './views/Advocate/AllAdvocate'
+import AddAdvocate from './views/Advocate/AddAdvocate'
+import AdvocateDetails from './views/Advocate/AdvocateDetails'
+import AllMeetings from './views/Meetings/AllMeetings'
+import MeetingDetails from './views/Meetings/MeetingDetails'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
@@ -74,10 +56,6 @@ const Modals = React.lazy(() => import('./views/notifications/modals/Modals'))
 const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
 
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
-
-const AddBanner = React.lazy(() => import('./views/Banner/AddBanner'))
-const ALLBanner = React.lazy(() => import('./views/Banner/AllBanner'))
-// const EditBanner = React.lazy(() => import('./views/Banner/EditBanner'))
 
 
 const routes = [
@@ -132,66 +110,19 @@ const routes = [
 
   // custom code 
 
-  // banner routes here 
+  // User routes here 
   { path: '/user/user', name: 'User', element: Cards, exact: true },
-  // { path: '/banner/add-banner', name: 'Add Banner', element: AddBanner },
   { path: '/user/all-user', name: 'All User', element: AllUser },
 
-  // location routes here 
-  { path: '/location', name: 'Location', element: Cards, exact: true },
-  { path: '/location/add-location', name: 'Add Location', element: AddCity },
-  { path: '/location/edit-location/:id', name: 'Edit Location', element: EditCity },
-  { path: '/location/all-location', name: 'All Location', element: AllCity },
+  // Advocate routes here 
+  { path: '/advocate/advocate', name: 'Advocate', element: Cards, exact: true },
+  { path: '/advocate/all-advocates', name: 'All Advocate', element: AllAdvocate },
+  { path: '/advocate/add-advocate', name: 'Add Advocate', element: AddAdvocate },
+  { path: '/advocate/advocate-detail/:id', name: 'Advocate Detail', element: AdvocateDetails },
 
-  // location routes here 
-  { path: '/property-type', name: 'Property Type', element: Cards, exact: true },
-  { path: '/property-type/add-property-type', name: 'Add Property Type', element: AddPropertyType },
-  { path: '/property-type/edit-property-type/:id', name: 'Edit Property Type', element: EditPropertyType },
-  { path: '/property-type/all-property-type', name: 'All Property Type', element: AllPropertyType },
-
-  // location routes here 
-  { path: '/property', name: 'Property Type', element: Cards, exact: true },
-  { path: '/property/add-property', name: 'Add Property', element: AddProperty },
-  { path: '/property/edit-property/:id', name: 'Edit Property', element: EditProperty },
-  { path: '/property/all-property', name: 'All Property', element: AllProperty },
-
-  // testimonial routes here 
-  { path: '/testimonial', name: 'Testimonial', element: Cards, exact: true },
-  { path: '/testimonial/add_testimonial', name: 'Add Testimonial', element: AddTestimonial },
-  { path: '/testimonial/all_testimonial', name: 'All Testimonial', element: AllTestimonial },
-  { path: '/testimonial/edit_testimonial/:id', name: 'Edit Testimonial', element: EditTestimonial },
-
-  // blogs routes here 
-  { path: '/blogs', name: 'Blogs', element: Cards, exact: true },
-  { path: '/blogs/add_blogs', name: 'Add Blogs', element: AddBlogs },
-  { path: '/blogs/all_blogs', name: 'All Blogs', element: AllBlogs },
-  { path: '/blogs/edit_blogs/:id', name: 'Edit Blogs', element: EditBlogs },
-
-  // property inquiry routes here 
-  { path: '/property_inquiry', name: 'Property Inquiry', element: Cards, exact: true },
-  { path: '/property_inquiry/all_property_inquiry', name: 'All Property Inquiry', element: AllPropertyInquiry },
-
-  // property inquiry routes here 
-  { path: '/inquiry', name: 'Inquiry', element: Cards, exact: true },
-  { path: '/inquiry/all_inquiry', name: 'All Inquiry', element: AllInquiry },
-
-  // form routes here 
-  { path: '/distributor', name: 'Distributor', element: Cards, exact: true },
-  { path: '/distributor/all_distributor', name: 'All Distributor', element: Distributor },
-
-  // form routes here 
-  { path: '/retailer', name: 'Retailer', element: Cards, exact: true },
-  { path: '/retailer/all_retailer', name: 'All Retailer', element: Retailer },
-
-  // form routes here 
-  { path: '/association', name: 'Association', element: Cards, exact: true },
-  { path: '/association/all_association', name: 'All Association', element: Manufacturer },
-
-  // news room routes here 
-  { path: '/news-room', name: 'News room', element: Cards, exact: true },
-  { path: '/news-room/all-news-room', name: 'All News Room', element: AllNewsRoom },
-  { path: '/news-room/add-news-room', name: 'Add News Room', element: CreateNewsRoom },
-  { path: '/news-room/edit-news-room/:id', name: 'Edit News Room', element: EditNewsRoom },
+  // Meetings routes here
+  { path: '/meetings/all-meetings', name: 'All Meetings', element: AllMeetings },
+  { path: '/meetings/meeting-detail/:id', name: 'Meeting Detail', element: MeetingDetails },
 
 ]
 

@@ -3,38 +3,55 @@ const router = express.Router();
 
 const { authenticateAccessToken, authorizeRoles } = require("../utils/jwtUtil");
 const User = require("../models/user.model");
-const authController = require("../controllers/authController");
+const adminController = require("../controllers/admin.controller");
+const advocateController = require("../controllers/advocateAuth.controller");
+const multer = require('multer');
 
-router.post(
-  "/admin-login",
-  authController.adminLogin
-)
+const storage = multer.memoryStorage();
 
-// 👇 Ye route sirf admin ke liye hai
-router.get(
-  "/users",
-  authenticateAccessToken,
-  authorizeRoles("admin"),
-  async (req, res) => {
-    try {
-      const users = await User.find().select("-password");
-      res.json({
-        success: true,
-        count: users.length,
-        users,
-      });
-    } catch (err) {
-      console.error("Admin /users error:", err.message);
-      res.status(500).json({ success: false, message: "Server error" });
+const ALLOWED_FILE_TYPES = {
+  images: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'],
+  documents: ['application/pdf']
+};
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB
+    files: 5 // Maximum 5 files at once (optional)
+  },
+  fileFilter: (req, file, cb) => {
+    const allAllowedTypes = [
+      ...ALLOWED_FILE_TYPES.images,
+      ...ALLOWED_FILE_TYPES.documents
+    ];
+
+    if (allAllowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(
+        new Error('Only images (JPEG, PNG, GIF, WEBP) and PDF files are allowed!'),
+        false
+      );
     }
   }
-);
+});
 
-router.put(
-  "/userIdVerify/:id",
-  authenticateAccessToken,
-  authorizeRoles("admin"),
-  authController.verifyUserId
-)
+router.post("/admin-login", adminController.adminLogin)
+
+// user and advocate routes 
+
+router.get("/users", authenticateAccessToken, authorizeRoles("admin"), adminController.getUsers);
+router.put("/userIdVerify/:id", authenticateAccessToken, authorizeRoles("admin"), adminController.verifyUserId)
+router.put("/userBlock/:id", authenticateAccessToken, authorizeRoles("admin"), adminController.blockId)
+router.post("/register-advocate", authenticateAccessToken, authorizeRoles("admin"), upload.single('userIdImage'), advocateController.register)
+router.get("/advocate-details/:id", authenticateAccessToken, authorizeRoles("admin"), advocateController.getAdvocateDetails)
+
+// meeting routes 
+
+router.get("/get-all-meetings", authenticateAccessToken, authorizeRoles("admin"), adminController.getAllMeetings)
+router.get("/delete-meeting/:id", authenticateAccessToken, authorizeRoles("admin"), adminController.deleteMeeting)
+router.get("/get-meeting/:id", adminController.getMeetingDetails)
+router.get("/get-signed-document/:id", adminController.getSignedDocument)
 
 module.exports = router;

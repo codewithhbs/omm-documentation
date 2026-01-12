@@ -22,7 +22,9 @@ const AllUser = () => {
       const res = await api.get("/api/admin/users");
       const filtered =
         res?.data?.users?.filter((u) => u?.role !== "admin") || [];
-      setUsers(filtered);
+
+      const formattedUsers = filtered.filter((user) => user?.role === "user");
+      setUsers(formattedUsers);
     } catch (error) {
       console.log("internal server error", error);
       toast.error("Failed to fetch users");

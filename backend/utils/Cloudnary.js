@@ -63,26 +63,36 @@ const uploadPDFTwo = async (file) => {
 //     }
 // };
 
-const uploadImage = async (filePath) => {
+const uploadImage = async (fileBuffer) => {
     try {
-        // console.log('Attempting to upload file at:', filePath);
+        return new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+                {
+                    folder: "artists",
+                    resource_type: "image"
+                },
+                (error, result) => {
+                    if (error) {
+                        console.error("Cloudinary image upload error:", error);
+                        reject(error);
+                    } else {
+                        resolve({
+                            image: result.secure_url,
+                            public_id: result.public_id
+                        });
+                    }
+                }
+            );
 
-        // Ensure file exists before upload
-        if (await fs.access(filePath).then(() => true).catch(() => false)) {
-            const result = await cloudinary.uploader.upload(filePath, {
-                folder: "artists"
-            });
-            // console.log('Upload successful:', result.secure_url);
-            return { image: result.secure_url, public_id: result.public_id };
-        } else {
-            // console.error('File not found at:', filePath);
-            throw new Error('File does not exist for upload');
-        }
+            const bufferStream = require("stream").Readable.from(fileBuffer);
+            bufferStream.pipe(uploadStream);
+        });
     } catch (error) {
-        console.error('Error during image upload:', error);
-        throw new Error('Failed to upload Image');
+        console.error("Upload image error:", error);
+        throw new Error("Failed to upload Image");
     }
 };
+
 
 const uploadVideo = async (file) => {
     try {
@@ -109,13 +119,15 @@ const deleteVideoFromCloudinary = async (public_id) => {
 
 const deleteImageFromCloudinary = async (public_id) => {
     try {
+        if (!public_id) return;
         await cloudinary.uploader.destroy(public_id);
-        console.log("Image Deleted");
+        console.log("Image Deleted:", public_id);
     } catch (error) {
         console.error("Error deleting Image from Cloudinary", error);
-        throw new Error('Failed to delete Image from Cloudinary');
+        throw new Error("Failed to delete Image from Cloudinary");
     }
 };
+
 
 const deletePdfFromCloudinary = async (public_id) => {
     try {

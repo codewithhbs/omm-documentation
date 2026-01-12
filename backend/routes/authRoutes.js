@@ -53,12 +53,43 @@ router.post(
   authController.login
 );
 
-router.get("/refresh-token", authController.refreshToken);
+router.post("/refresh-token", authController.refreshToken);
 router.post("/logout", authController.logout);
 
 
 // Protected route
 router.get("/me", authenticateAccessToken, authController.me);
 router.put("/update_user_profile", authenticateAccessToken, upload.single('userIdImage'), authController.profileUpdate)
+
+// Forgot password – OTP send
+router.post(
+  "/forgot-password",
+  rateLimiter({
+    windowSeconds: 60, // 1 min
+    maxRequests: 3,
+    keyPrefix: "rl:forgot-password",
+    getKey: (req, ip) => {
+      const email = req.body?.email || "no-email";
+      return `forgot:${ip}:${email}`;
+    },
+  }),
+  authController.resetPassword
+);
+
+// Verify OTP
+router.post(
+  "/verify-reset-otp",
+  rateLimiter({
+    windowSeconds: 300, // 5 min
+    maxRequests: 5,
+    keyPrefix: "rl:verify-otp",
+    getKey: (req, ip) => {
+      const email = req.body?.email || "no-email";
+      return `verify:${ip}:${email}`;
+    },
+  }),
+  authController.verifyResetOtp
+);
+
 
 module.exports = router;

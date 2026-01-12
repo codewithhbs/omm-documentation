@@ -16,7 +16,7 @@ export default function Footer() {
               </div>
               <div>
                 <h3 className="text-2xl font-extrabold">Omm Documentation</h3>
-                <p className="text-xs text-gray-400">India's First Online e-Notary</p>
+                <p className="text-xs text-gray-400">Online Notary(India & Abroad)</p>
               </div>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">

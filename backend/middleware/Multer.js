@@ -40,19 +40,37 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
+  const imageMimeTypes = [
+    'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+    'image/bmp', 'image/tiff', 'image/avif'
+  ];
+
   const allowedMimeTypes = [
-    'image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/bmp', 'image/tiff', 'image/avif',
+    ...imageMimeTypes,
     'application/pdf',
-    ...videoMimeTypes, // Video formats
-    ...voiceMimeTypes  // Voice note formats
+    ...videoMimeTypes,
+    ...voiceMimeTypes
   ];
 
   if (!allowedMimeTypes.includes(file.mimetype)) {
     return cb(new Error('Unsupported file format'), false);
   }
 
-  // Check file size limit for videos (50MB)
-  if (videoMimeTypes.includes(file.mimetype) && req.file?.size > 50 * 1024 * 1024) { 
+  // multer puts file size on file object
+  const size = file.size;
+
+  // 🖼️ Image → 5MB
+  if (imageMimeTypes.includes(file.mimetype) && size > 5 * 1024 * 1024) {
+    return cb(new Error('Image size must be less than 5MB'), false);
+  }
+
+  // 📄 PDF → 10MB
+  if (file.mimetype === 'application/pdf' && size > 10 * 1024 * 1024) {
+    return cb(new Error('PDF size must be less than 10MB'), false);
+  }
+
+  // 🎥 Video → 50MB
+  if (videoMimeTypes.includes(file.mimetype) && size > 50 * 1024 * 1024) {
     return cb(new Error('Video file size exceeds 50MB limit'), false);
   }
 

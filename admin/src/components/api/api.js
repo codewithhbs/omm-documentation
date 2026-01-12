@@ -1,37 +1,67 @@
-// utils/api.js ya lib/axios.js
+// utils/api.js
 import axios from "axios";
 
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:4000";
+
 const api = axios.create({
-    baseURL: "http://localhost:4000",
-    withCredentials: true,    // ← cookie jayegi har request mein
+  baseURL: API_BASE,
+  timeout: 15000,
 });
 
-// Response interceptor
+/* =========================
+   REQUEST INTERCEPTOR
+========================= */
+api.interceptors.request.use((config) => {
+  const accessToken = localStorage.getItem("accessToken");
+
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+
+  return config;
+});
+
+/* =========================
+   RESPONSE INTERCEPTOR
+========================= */
 api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        const originalRequest = error.config;
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes("/auth/refresh-token")
+    ) {
+      originalRequest._retry = true;
 
-            try {
-                console.log("i am up")
-                // Refresh token se naya accessToken le aao
-                await axios.get("http://localhost:4000/api/auth/refresh-token", {
-                    withCredentials: true
-                });
-                console.log("i am refresh frontend")
-                // Purani request dobara bhejo
-                return api(originalRequest);
-            } catch (refreshError) {
-                // Refresh bhi fail → user ko logout ho gaya
-                // useAuthStore.getState().logout();
-                window.location.href = "/login";
-            }
-        }
-        return Promise.reject(error);
+      try {
+        const refreshToken = localStorage.getItem("refreshToken");
+        if (!refreshToken) return Promise.reject(error);
+
+        // ✅ SAME axios instance
+        const res = await api.post("/api/auth/refresh-token", {
+          refreshToken,
+        });
+
+        const newAccessToken = res.data.accessToken;
+
+        localStorage.setItem("accessToken", newAccessToken);
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+        return api(originalRequest);
+      } catch (err) {
+        // hard logout
+        localStorage.clear();
+        window.location.href = "/login";
+        return Promise.reject(err);
+      }
     }
+
+    return Promise.reject(error);
+  }
 );
 
 export default api;

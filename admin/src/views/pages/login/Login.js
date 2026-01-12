@@ -37,18 +37,20 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await api.post('/api/admin/admin-login', formData);
+      const res = await axios.post('http://localhost:4000/api/admin/admin-login', formData);
       // console.log('Response:', res.data);
 
-      const { sessionId } = res.data;
-      // const role = user.role;
+      const { accessToken, refreshToken, sessionId, user } = res.data;
+      const role = user.role;
 
-      // if (role !== 'admin') {
-      //   toast.error('You are not an admin');
-      //   return;
-      // }
+      if (role !== 'admin') {
+        toast.error('You are not an admin');
+        return;
+      }
 
-      sessionStorage.setItem('token', sessionId);
+      localStorage.setItem('token', sessionId);
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
       toast.success('Login Successfully');
       window.location.href = '/'
       // navigate('/#/dashboard'); // Redirect to the admin dashboard

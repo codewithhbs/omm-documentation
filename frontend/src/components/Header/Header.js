@@ -41,7 +41,7 @@ export default function Header() {
                   <h1 className="text-xl font-extrabold text-gray-900">
                     Omm Documentation
                   </h1>
-                  <p className="text-xs text-gray-500 -mt-1">Online e-Notary</p>
+                  <p className="text-xs text-gray-500 -mt-1">Online Notary(India & Abroad)</p>
                 </div>
               </a>
 

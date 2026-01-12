@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 const ProfileUpdate = () => {
   const [loading, setLoading] = useState(false);
   const [pdfFile, setPdfFile] = useState(null);
+  const [role, setRole] = useState("user");
 
   const [existingPdf, setExistingPdf] = useState(null);
   const [isVerified, setIsVerified] = useState(false);
@@ -17,7 +18,13 @@ const ProfileUpdate = () => {
     phone: "",
     address: "",
     country: "IN",
+
+    // 👇 notary only
+    advocateRegistrationNo: "",
+    advocateJurisdiction: "",
+    advocateExpireDate: "",
   });
+
 
   // 🔹 Fetch logged-in user (SAFE)
   const fetchUser = async () => {
@@ -31,7 +38,14 @@ const ProfileUpdate = () => {
         phone: user?.phone ?? "",
         address: user?.address ?? "",
         country: user?.country ?? "IN",
+
+        advocateRegistrationNo: user?.advocateRegistrationNo ?? "",
+        advocateJurisdiction: user?.advocateJurisdiction ?? "",
+        advocateExpireDate: user?.advocateExpireDate
+          ? user.advocateExpireDate.split("T")[0]
+          : "",
       });
+
 
       setExistingPdf(user?.userIdImage?.pdf ?? null);
       setIsVerified(Boolean(user?.userIdImageVerify));
@@ -41,6 +55,10 @@ const ProfileUpdate = () => {
   };
 
   useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (!user) return;
+    const parsedUser = JSON.parse(user);
+    setRole(parsedUser?.role || "user");
     fetchUser();
   }, []);
 
@@ -120,7 +138,7 @@ const ProfileUpdate = () => {
         />
 
         <Input
-          label="Family Name"
+          label="Last Name"
           name="familyName"
           value={formData.familyName}
           onChange={handleChange}
@@ -146,6 +164,37 @@ const ProfileUpdate = () => {
           value={formData.country}
           onChange={handleChange}
         />
+
+        {role === "notary" && (
+          <div className="border rounded-xl p-4 space-y-4 bg-gray-50">
+            <h3 className="text-sm font-semibold text-gray-700">
+              Notary Details
+            </h3>
+
+            <Input
+              label="Registration Number"
+              name="advocateRegistrationNo"
+              value={formData.advocateRegistrationNo}
+              onChange={handleChange}
+            />
+
+            <Input
+              label="Jurisdiction"
+              name="advocateJurisdiction"
+              value={formData.advocateJurisdiction}
+              onChange={handleChange}
+            />
+
+            <Input
+              type="date"
+              label="Registration Expiry Date"
+              name="advocateExpireDate"
+              value={formData.advocateExpireDate}
+              onChange={handleChange}
+            />
+          </div>
+        )}
+
 
         {/* 🔹 PDF Upload Section */}
         <div className="border rounded-xl p-4 space-y-3">

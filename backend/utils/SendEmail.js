@@ -18,7 +18,7 @@ const sendEmail = async (options) => {
 
 
         const mailOptions = {
-            from: `"Blueace" <${process.env.EMAIL_USERNAME}>`,
+            from: `"Omm Documentation" <${process.env.EMAIL_USERNAME}>`,
             to: options.email,
             subject: options.subject,
             html: options.message

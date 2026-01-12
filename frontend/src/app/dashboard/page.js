@@ -1,7 +1,6 @@
 "use client";
 // app/dashboard/page.js 
 import { Home, Calendar, Video, User, LogOut, Menu } from "lucide-react";
-import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import CreateMeetingModal from "@/components/CreateMeetingModal/CreateMeetingModal";
 import MeetingsTab from "@/components/MeetingsTab/MeetingsTab";
@@ -9,6 +8,7 @@ import SlotsTab from "@/components/SlotsTab/SlotsTab";
 import HomeTab from "@/components/HomeTab/HomeTab";
 import api from "@/utils/api";
 import ProfileUpdate from "@/components/Profile/ProfileUpdate";
+import TimeSlot from "@/components/TimeSlot/TimeSlot";
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState("home");
@@ -20,7 +20,7 @@ export default function Page() {
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
-    const token = JSON.parse(localStorage.getItem('user'));
+    // const token = JSON.parse(localStorage.getItem('user'));
     if (!user) {
       // sessionStorage.removeItem('user');
       window.location.href = "/login";
@@ -60,9 +60,11 @@ export default function Page() {
     }
   };
 
+  // console.log("user", user)
+
   return (
     <>
-      <div className="min-h-screen bg-gray-50 flex">
+      <div className="h-[89vh] bg-gray-50 flex overflow-hidden">
         {/* Mobile Sidebar - Slide-over */}
         <div
           className={`fixed inset-0 z-40 md:hidden ${sidebarOpen ? "pointer-events-auto" : "pointer-events-none"
@@ -118,6 +120,28 @@ export default function Page() {
               >
                 <Calendar className="w-5 h-5" /> Available Slots
               </button>
+              {user?.role === "notary" && (
+                <>
+                  <button
+                    onClick={() => handleMobileTabChange("time-slots")}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition text-sm ${activeTab === "profile"
+                      ? "bg-indigo-100 text-indigo-900 font-semibold"
+                      : "hover:bg-gray-100 text-gray-700"
+                      }`}
+                  >
+                    <User className="w-5 h-5" /> Time Slote
+                  </button>
+                  {/* <button
+                    onClick={() => handleMobileTabChange("profile")}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition text-sm ${activeTab === "profile"
+                      ? "bg-indigo-100 text-indigo-900 font-semibold"
+                      : "hover:bg-gray-100 text-gray-700"
+                      }`}
+                  >
+                    <User className="w-5 h-5" /> Logbook
+                  </button> */}
+                </>
+              )}
             </nav>
 
             <div className="border-t mt-4 pt-4 px-4 space-y-2">
@@ -133,7 +157,7 @@ export default function Page() {
 
         {/* Desktop Sidebar */}
         <aside className="hidden md:block w-64 bg-white shadow-lg">
-          <div className="p-6 border-b">
+          <div className="p-4 border-b">
             <h1 className="text-2xl font-bold text-indigo-900">OD®</h1>
           </div>
           <nav className="p-4 space-y-2">
@@ -164,6 +188,28 @@ export default function Page() {
             >
               <Calendar className="w-5 h-5" /> Available Slots
             </button>
+            {user?.role === "notary" && (
+              <>
+                <button
+                  onClick={() => handleTabChange("time-slots")}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${activeTab === "time-slots"
+                    ? "bg-indigo-100 text-indigo-900 font-semibold"
+                    : "hover:bg-gray-100 text-gray-700"
+                    }`}
+                >
+                  <Calendar className="w-5 h-5" /> Time Slote
+                </button>
+                {/* <button
+                  onClick={() => handleTabChange("slots")}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${activeTab === "slots"
+                    ? "bg-indigo-100 text-indigo-900 font-semibold"
+                    : "hover:bg-gray-100 text-gray-700"
+                    }`}
+                >
+                  <Calendar className="w-5 h-5" /> Logbook
+                </button> */}
+              </>
+            )}
           </nav>
           <div className="border-t mt-6 pt-4 px-4 space-y-2">
             <button onClick={() => handleTabChange("profile")} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-black hover:bg-gray-100">
@@ -176,9 +222,9 @@ export default function Page() {
         </aside>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col h-full overflow-hidden">
           {/* Header */}
-          <header className="bg-linear-to-r from-indigo-900 to-blue-900 text-white px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
+          <header className="h-16 bg-linear-to-r from-indigo-900 to-blue-900 text-white px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
             <div className="flex flex-col justify-between items-center md:flex-row-reverse gap-3">
               {/* Top row: logo + hamburger + user (mobile), user only (desktop) */}
               <div className="flex items-center justify-between w-full md:w-auto">
@@ -217,12 +263,12 @@ export default function Page() {
             </div>
           </header>
 
-          <main className="p-4 sm:p-6 lg:p-8">
+          <main className="h-82 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
             {/* Tabs */}
-            <div className="flex gap-4 sm:gap-8 border-b mb-6 sm:mb-8 overflow-x-auto">
+            {/* <div className="flex gap-4 sm:gap-8 border-b mb-6 sm:mb-8 overflow-x-auto">
               {["home", "meetings", "slots"].map((tab) => (
                 <button
-                  key={tab}
+                  key={tab} 
                   onClick={() => setActiveTab(tab)}
                   className={`pb-3 sm:pb-4 px-1 sm:px-2 font-medium capitalize transition border-b-4 whitespace-nowrap ${activeTab === tab
                     ? "border-indigo-600 text-indigo-600"
@@ -236,7 +282,7 @@ export default function Page() {
                       : "Available Slots"}
                 </button>
               ))}
-            </div>
+            </div> */}
 
             {/* Tab Content */}
             {activeTab === "home" && <HomeTab />}
@@ -245,6 +291,7 @@ export default function Page() {
             )}
             {activeTab === "slots" && <SlotsTab />}
             {activeTab === "profile" && <ProfileUpdate />}
+            {activeTab === "time-slots" && <TimeSlot />}
           </main>
         </div>
       </div>

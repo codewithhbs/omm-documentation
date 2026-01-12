@@ -5,6 +5,10 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const advocateRoutes = require("./routes/advocateRoutes");
+const meetingRoutes = require("./routes/meetingRoutes");
+require("./cron/meetingReminder.cron");
+require("./cron/meetingStatus.cron");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -38,6 +42,8 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/advocate", advocateRoutes);
+app.use("/api/meeting", meetingRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

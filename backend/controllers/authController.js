@@ -7,11 +7,11 @@ const {
     isRefreshTokenValid,
 } = require("../utils/jwtUtil");
 const jwt = require("jsonwebtoken");
+const generateOtp = require("../utils/otpHelper");
+const sendEmail = require("../utils/SendEmail");
 
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "dev-refresh-secret";
 
-// ✅ Register / Signup
-// POST /api/auth/register 
 async function register(req, res) {
     try {
         console.log("i am hit")
@@ -57,6 +57,7 @@ async function register(req, res) {
         const safeUser = {
             _id: user._id,
             email: user.email,
+            phone: user.phone,
             role: user.role,
             userName: user.userName,
         };
@@ -118,8 +119,6 @@ async function register(req, res) {
     }
 }
 
-// ✅ Login
-// POST /api/auth/login
 async function login(req, res) {
     try {
         const { userName, password } = req.body;
@@ -152,6 +151,7 @@ async function login(req, res) {
             _id: user._id,
             name: user.name,
             email: user.email,
+            phone: user.phone,
             role: user.role,
             userName: user.userName,
         };
@@ -189,84 +189,83 @@ async function login(req, res) {
 
 // ✅ Refresh token
 async function refreshToken(req, res) {
-  try {
-    console.log("🔄 Refresh token hit");
-
-    // 1️⃣ Refresh token body ya header se lo
-    const refreshToken =
-      req.body.refreshToken || req.headers["x-refresh-token"];
-
-    if (!refreshToken) {
-      return res.status(401).json({
-        success: false,
-        message: "Refresh token missing",
-      });
-    }
-
-    // 2️⃣ JWT verify
-    let decoded;
     try {
-      decoded = jwt.verify(
-        refreshToken,
-        process.env.JWT_REFRESH_SECRET
-      );
-    } catch (err) {
-      return res.status(403).json({
-        success: false,
-        message: "Invalid or expired refresh token",
-      });
+        console.log("🔄 Refresh token hit");
+
+        // 1️⃣ Refresh token body ya header se lo
+        const refreshToken =
+            req.body.refreshToken || req.headers["x-refresh-token"];
+
+        if (!refreshToken) {
+            return res.status(401).json({
+                success: false,
+                message: "Refresh token missing",
+            });
+        }
+
+        // 2️⃣ JWT verify
+        let decoded;
+        try {
+            decoded = jwt.verify(
+                refreshToken,
+                process.env.JWT_REFRESH_SECRET
+            );
+        } catch (err) {
+            return res.status(403).json({
+                success: false,
+                message: "Invalid or expired refresh token",
+            });
+        }
+
+        const { sub: userId, jti } = decoded;
+
+        // 3️⃣ Redis me validity check
+        const isValid = await isRefreshTokenValid(jti);
+        if (!isValid) {
+            return res.status(403).json({
+                success: false,
+                message:
+                    "Refresh token revoked (logged out from another device?)",
+            });
+        }
+
+        // 4️⃣ User fetch (optional but recommended)
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        // 5️⃣ Safe payload
+        const safeUser = {
+            _id: user._id,
+            email: user.email,
+            role: user.role || "user",
+        };
+
+        // 6️⃣ New access token
+        const newAccessToken = signAccessToken(safeUser);
+
+        // 7️⃣ JSON response (frontend store karega)
+        return res.status(200).json({
+            success: true,
+            message: "Token refreshed successfully",
+            accessToken: newAccessToken,
+            user: safeUser, // optional
+        });
+
+    } catch (error) {
+        console.error("❌ Refresh token error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Server error during token refresh",
+        });
     }
-
-    const { sub: userId, jti } = decoded;
-
-    // 3️⃣ Redis me validity check
-    const isValid = await isRefreshTokenValid(jti);
-    if (!isValid) {
-      return res.status(403).json({
-        success: false,
-        message:
-          "Refresh token revoked (logged out from another device?)",
-      });
-    }
-
-    // 4️⃣ User fetch (optional but recommended)
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    // 5️⃣ Safe payload
-    const safeUser = {
-      _id: user._id,
-      email: user.email,
-      role: user.role || "user",
-    };
-
-    // 6️⃣ New access token
-    const newAccessToken = signAccessToken(safeUser);
-
-    // 7️⃣ JSON response (frontend store karega)
-    return res.status(200).json({
-      success: true,
-      message: "Token refreshed successfully",
-      accessToken: newAccessToken,
-      user: safeUser, // optional
-    });
-
-  } catch (error) {
-    console.error("❌ Refresh token error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server error during token refresh",
-    });
-  }
 }
 
 // ✅ Logout
-// POST /api/auth/logout
 async function logout(req, res) {
     try {
         // 1️⃣ refreshToken body ya header se lo
@@ -310,11 +309,9 @@ async function logout(req, res) {
 }
 
 // ✅ Current user (requires access token)
-// GET /api/auth/me
 async function me(req, res) {
     try {
         const userId = req.user?.sub;
-        console.log("userId", userId)
 
         const user = await User.findById(userId);
         if (!user) {
@@ -340,7 +337,7 @@ async function profileUpdate(req, res) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        const { name, phone, familyName, address, country } = req.body;
+        const { name, phone, familyName, address, country, advocateRegistrationNo, advocateJurisdiction, advocateExpireDate } = req.body;
 
         // Update user fields
         if (name) user.name = name;
@@ -348,6 +345,9 @@ async function profileUpdate(req, res) {
         if (familyName) user.familyName = familyName;
         if (address) user.address = address;
         if (country) user.country = country;
+        if (advocateRegistrationNo) user.advocateRegistrationNo = advocateRegistrationNo;
+        if (advocateJurisdiction) user.advocateJurisdiction = advocateJurisdiction;
+        if (advocateExpireDate) user.advocateExpireDate = advocateExpireDate;
 
         // Handle file upload
         if (req.file) {
@@ -373,22 +373,22 @@ async function profileUpdate(req, res) {
         await user.save();
 
         // Return safe user data (without password)
-        const safeUser = {
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            userName: user.userName,
-            phone: user.phone,
-            familyName: user.familyName,
-            address: user.address,
-            country: user.country,
-            userIdImage: user.userIdImage,
-            role: user.role
-        };
+        // const safeUser = {
+        //     _id: user._id,
+        //     name: user.name,
+        //     email: user.email,
+        //     userName: user.userName,
+        //     phone: user.phone,
+        //     familyName: user.familyName,
+        //     address: user.address,
+        //     country: user.country,
+        //     userIdImage: user.userIdImage,
+        //     role: user.role
+        // };
 
         res.status(200).json({
             success: true,
-            user: safeUser,
+            user: user,
             message: "Profile updated successfully"
         });
     } catch (error) {
@@ -400,115 +400,127 @@ async function profileUpdate(req, res) {
     }
 }
 
-async function verifyUserId(req, res) {
+// POST /api/auth/forgot-password
+async function resetPassword(req, res) {
     try {
-        const { id } = req.params;
-        const { userIdImageVerify } = req.body;
-        const user = await User.findById(id);
-        if (!user) {
-            return res.status(404).json({ success: false, message: "User not found" });
-        }
-        user.userIdImageVerify = userIdImageVerify;
-        await user.save();
+        const { email } = req.body;
 
-        res.status(200).json({ success: true, message: "User verification updated successfully" });
-    } catch (error) {
-        console.log("Internal server error", error)
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error"
-        })
-    }
-}
-
-async function adminLogin(req, res) {
-    try {
-        const { email, password } = req.body;
-        console.log("body", email)
-
-        if (!email || !password) {
+        if (!email) {
             return res.status(400).json({
                 success: false,
-                message: "email and password are required",
+                message: "Email is required",
             });
         }
-        console.log(
-            "i am befor check"
-        )
 
-        // password field by default select: false hai, isliye +password
-        const user = await User.findOne({ email }).select("+password");
+        const user = await User.findOne({ email });
+
+        // 🔒 Security: same response even if user not found
         if (!user) {
-            return res.status(401).json({
-                success: false,
-                message: "Invalid credentials",
+            return res.json({
+                success: true,
+                message: "If this email exists, OTP has been sent",
             });
         }
 
-        console.log(
-            "i am after check"
-        )
+        const otp = generateOtp();
+        const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-        if (user.role !== "admin") {
-            return res.status(401).json({
-                success: false,
-                message: "Invalid credentials",
-            });
-        }
+        user.resetOtp = otp;
+        user.resetOtpExpiry = otpExpiry;
+        await user.save();
 
-        console.log(
-            "i am befor password"
-        )
+        // 📧 Email template
+        const message = `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6">
+                <h2>Reset Your Password</h2>
+                <p>Hello ${user.name || "User"},</p>
+                <p>You requested to reset your password.</p>
+                <p><strong>Your OTP is:</strong></p>
+                <h1 style="letter-spacing: 4px;">${otp}</h1>
+                <p>This OTP is valid for <strong>10 minutes</strong>.</p>
+                <p>If you did not request this, please ignore this email.</p>
+                <br />
+                <p>— Omm Documentation Team</p>
+            </div>
+        `;
 
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) {
-            return res.status(401).json({
-                success: false,
-                message: "Wrong password",
-            });
-        }
-
-        console.log(
-            "i am after password"
-        )
-
-        const safeUser = {
-            _id: user._id,
-            name: user.name,
+        const emailSent = await sendEmail({
             email: user.email,
-            role: user.role,
-            userName: user.userName,
-        };
-
-        const accessToken = signAccessToken(safeUser);
-        const { token: refreshToken, jti } = await signRefreshToken(user._id);
-
-        res.cookie("accessToken", accessToken, {
-            httpOnly: true,
-            secure: true,          // 🔥 REQUIRED for HTTPS
-            sameSite: "none",      // 🔥 REQUIRED for cross-domain
-            maxAge: 15 * 60 * 1000, // 15 minutes
+            subject: "Password Reset OTP - Omm Documentation",
+            message,
         });
 
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: true,          // 🔥 REQUIRED
-            sameSite: "none",      // 🔥 REQUIRED
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-        });
+        if (!emailSent) {
+            return res.status(500).json({
+                success: false,
+                message: "Failed to send OTP email. Please try again.",
+            });
+        }
 
-        res.status(201).json({
+        return res.json({
             success: true,
-            user: safeUser,
-            // accessToken,
-            // refreshToken,
-            sessionId: jti,
-        })
-    } catch (err) {
-        console.error("Login error:", err);
-        res.status(500).json({ success: false, message: "Server error during login" });
+            message: "OTP has been sent to your email",
+        });
+    } catch (error) {
+        console.error("Forgot password error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Server error",
+        });
     }
 }
+
+// POST /api/auth/verify-reset-otp
+async function verifyResetOtp(req, res) {
+    try {
+        const { email, otp, newPassword } = req.body;
+
+        if (!email || !otp || !newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "Email and OTP are required",
+            });
+        }
+
+        const user = await User.findOne({ email }).select("+password");
+
+        if (
+            !user ||
+            !user.resetOtp ||
+            user.resetOtp !== Number(otp)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid OTP",
+            });
+        }
+
+        if (user.resetOtpExpiry < new Date()) {
+            return res.status(400).json({
+                success: false,
+                message: "OTP expired",
+            });
+        }
+
+        user.password = newPassword; // pre-save hook will hash
+        user.resetOtp = undefined;
+        user.resetOtpExpiry = undefined;
+
+        await user.save();
+
+        return res.json({
+            success: true,
+            message: "Password reset successfully",
+        });
+    } catch (error) {
+        console.error("Verify OTP error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Server error",
+        });
+    }
+}
+
 
 // admin-login
 module.exports = {
@@ -518,6 +530,6 @@ module.exports = {
     logout,
     me,
     profileUpdate,
-    verifyUserId,
-    adminLogin
+    resetPassword,
+    verifyResetOtp
 };

@@ -5,10 +5,8 @@ import { motion } from 'framer-motion';
 import { Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import api from '@/utils/api';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-// import { useAuthStore } from '@/stores/authStore';
 
 export default function Page() {
   const [showPassword, setShowPassword] = useState(false);
@@ -34,7 +32,7 @@ export default function Page() {
     setLoading(true);
 
     try {
-      const res = await axios.post(`https://www.api.ommdocumentation.com/api/auth/login`, formData);
+      const res = await axios.post(`${API_BASE}/api/auth/login`, formData);
 
       if (res.data.success) {
         const { user, accessToken, refreshToken, sessionId } = res.data;

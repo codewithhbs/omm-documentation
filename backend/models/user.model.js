@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
             enum: ["user", "notary", "admin"],
             default: "user",
         },
-        userName: {  // lowercase 'u'
+        userName: {
             type: String,
             required: true,
             unique: true,
@@ -56,6 +56,22 @@ const userSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        advocateRegistrationNo: {
+            type: String,
+        },
+        advocateJurisdiction: {
+            type: String,
+        },
+        advocateExpireDate: {
+            type: Date,
+        },
+        resetOtp: {
+            type: Number,
+        },
+        resetOtpExpiry: {
+            type: Date,
+        },
+
         // KYC / verification
         kycStatus: {
             type: String,
@@ -70,11 +86,6 @@ const userSchema = new mongoose.Schema(
 
         // Aadhaar ko kabhi plain mat store karna, ya toh last4 ya hash
         aadhaarLast4: String,
-        country: {
-            type: String,
-            default: "IN",
-        },
-
         isEmailVerified: {
             type: Boolean,
             default: false,

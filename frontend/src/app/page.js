@@ -104,7 +104,7 @@ export default function Home() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-blue-50">
+      <section className="relative overflow-hidden bg-linear-to-br from-indigo-50 via-white to-blue-50">
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
@@ -121,7 +121,7 @@ export default function Home() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-3 px-7 py-4 bg-gradient-to-r from-emerald-500 to-green-700 text-white rounded-full text-sm md:text-base font-bold shadow-xl shadow-green-500/30 mb-8"
+            className="inline-flex items-center gap-3 px-7 py-4 bg-linear-to-r from-emerald-500 to-green-700 text-white rounded-full text-sm md:text-base font-bold shadow-xl shadow-green-500/30 mb-8"
           >
             <Shield className="w-6 h-6" />
             Supreme Court of India + All High Courts Approved
@@ -137,7 +137,7 @@ export default function Home() {
           >
             Get Documents Notarized Online
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-700">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-600 via-purple-600 to-blue-700">
               From Anywhere in the World
             </span>
             <br />
@@ -174,7 +174,7 @@ export default function Home() {
                 className="group"
               >
                 <div className={`p-6 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100 hover:shadow-2xl hover:scale-105 transition-all duration-300`}>
-                  <div className={`w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br ${item.color} p-3 shadow-md`}>
+                  <div className={`w-12 h-12 mx-auto mb-3 rounded-xl bg-linear-to-br ${item.color} p-3 shadow-md`}>
                     <item.icon className="w-full h-full text-white" />
                   </div>
                   <p className="text-sm md:text-base font-semibold text-gray-800">{item.text}</p>
@@ -190,10 +190,10 @@ export default function Home() {
             transition={{ delay: 0.9, duration: 0.6 }}
             className="mt-16 flex flex-col sm:flex-row gap-5 justify-center items-center"
           >
-            <button className="group relative px-10 py-5 bg-gradient-to-r from-indigo-600 to-blue-700 text-white font-bold text-lg rounded-full shadow-2xl hover:shadow-indigo-600/50 transform hover:scale-105 transition-all duration-300 flex items-center gap-3 overflow-hidden">
+            <button className="group relative px-10 py-5 bg-linear-to-r from-indigo-600 to-blue-700 text-white font-bold text-lg rounded-full shadow-2xl hover:shadow-indigo-600/50 transform hover:scale-105 transition-all duration-300 flex items-center gap-3 overflow-hidden">
               <span className="relative z-10">Book Appointment</span>
               <ArrowRight className="w-6 h-6 relative z-10 group-hover:translate-x-1 transition" />
-              <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500"></div>
+              <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
             </button>
 
             <button className="px-10 py-5 border-2 border-indigo-600 text-indigo-700 font-bold text-lg rounded-full hover:bg-indigo-50 transition flex items-center gap-3 backdrop-blur-sm">
@@ -227,37 +227,8 @@ export default function Home() {
       </div>
     </section>
 
-      {/* Trust Badges */}
-      {/* <section className="py-8 bg-linear-to-b from-indigo-50 to-white">
-        <div className="container mx-auto px-6 text-center">
-          <div className="grid grid-cols-3 md:grid-cols-5 gap-8 items-center justify-center text-sm font-medium text-gray-600">
-            <div className="shadow shadow-cyan-950 h-[158px] flex flex-col items-center justify-center rounded-sm bg-[#F7FBFF]">
-              <CheckCircle className="w-8 h-8 mx-auto mb-3 text-green-600" />{" "}
-              Supreme Court Approved
-            </div>
-            <div className="shadow shadow-cyan-950 h-[158px] flex flex-col items-center justify-center rounded-sm bg-[#F7FBFF]">
-              <Award className="w-8 h-8 mx-auto mb-3 text-blue-600" /> 5000+
-              Documents Notarized
-            </div>
-            <div className="shadow shadow-cyan-950 h-[158px] flex flex-col items-center justify-center rounded-sm bg-[#F7FBFF]">
-              <Users className="w-8 h-8 mx-auto mb-3 text-indigo-600" /> Trusted
-              by 200+ Law Firms
-            </div>
-            <div className="shadow shadow-cyan-950 h-[158px] flex flex-col items-center justify-center rounded-sm bg-[#F7FBFF]">
-              <Lock className="w-8 h-8 mx-auto mb-3 text-red-600" /> Bank-Grade
-              Encryption
-            </div>
-            <div className="shadow shadow-cyan-950 h-[158px] flex flex-col items-center justify-center rounded-sm bg-[#F7FBFF]">
-              <Zap className="w-8 h-8 mx-auto mb-3 text-yellow-600" /> Instant
-              Delivery
-            </div>
-            <div className='shadow shadow-cyan-950 h-[158px] flex flex-col items-center justify-center rounded-sm'><Globe className="w-8 h-8 mx-auto mb-3 text-purple-600" /> 50+ Countries Served</div>
-          </div>
-        </div>
-      </section> */}
-
       {/* Why Omm Documentation */}
-      <section className="relative py-20 bg-gradient-to-b from-indigo-50 to-white">
+      <section className="relative py-20 bg-linear-to-b from-indigo-50 to-white">
         <div className="container mx-auto px-6">
           {/* Centered Heading */}
           <motion.div
@@ -409,48 +380,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Documents We Notarize - SEO Goldmine */}
-      {/* <section className="py-20 bg-linear-to-b from-indigo-50 to-white">
-        <div className="container mx-auto px-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-16">
-            Documents We Notarize Online
-          </h2>
-          <div className="grid md:grid-cols-5 gap-6 text-center">
-            {[
-              "General Affidavit",
-              "Income Affidavit",
-              "Name Change Affidavit",
-              "Address Proof Affidavit",
-              "Power of Attorney (General)",
-              "Special Power of Attorney",
-              "Property PoA",
-              "Medical PoA",
-              "Sale Agreement",
-              "Rent Agreement",
-              "Leave & License",
-              "NOC from Landlord",
-              "Undertaking Letter",
-              "Declaration",
-              "Indemnity Bond",
-              "Guarantee Letter",
-              "Employment Documents",
-              "Education Certificates",
-              "Marriage Certificate",
-              "All Legal Documents",
-            ].map((doc, i) => (
-              <div
-                key={i}
-                className="p-6 border border-[#EFF3FF] bg-[#F9FAFB] rounded-xl hover:shadow-lg transition"
-              >
-                <FileText className="w-12 h-12 text-indigo-600 mx-auto mb-3" />
-                <p className="font-medium">{doc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section> */}
-
-      <section className="relative py-20 bg-gradient-to-b from-indigo-50 to-white">
+      <section className="relative py-20 bg-linear-to-b from-indigo-50 to-white">
         <div className="container mx-auto px-6">
           {/* Centered Heading */}
           <motion.div
@@ -734,11 +664,11 @@ export default function Home() {
 
                 <ul className="space-y-4 text-left mb-8">
                   <li className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />{" "}
+                    <CheckCircle className="w-6 h-6 text-green-600 shrink-0" />{" "}
                     USB-based DSC required
                   </li>
                   <li className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />{" "}
+                    <CheckCircle className="w-6 h-6 text-green-600 shrink-0" />{" "}
                     Max 10MB file size
                   </li>
                 </ul>
@@ -791,22 +721,22 @@ export default function Home() {
 
                 <ul className="space-y-4 text-left mb-8">
                   <li className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />{" "}
+                    <CheckCircle className="w-6 h-6 text-green-600 shrink-0" />{" "}
                     Passport required (Aadhaar not needed)
                   </li>
                   <li className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />{" "}
+                    <CheckCircle className="w-6 h-6 text-green-600 shrink-0" />{" "}
                     KYC video meeting
                   </li>
                   <li className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />{" "}
+                    <CheckCircle className="w-6 h-6 text-green-600 shrink-0" />{" "}
                     Max 10MB file size
                   </li>
                 </ul>
 
                 <a
                   href="/"
-                  className="block w-full bg-gradient-to-r from-green-600 to-emerald-700 text-white font-bold py-5 rounded-xl hover:shadow-xl transition transform hover:scale-105 flex items-center justify-center gap-3"
+                  className="block w-full bg-linear-to-r from-green-600 to-emerald-700 text-white font-bold py-5 rounded-xl hover:shadow-xl transition transform hover:scale-105 flex items-center justify-center gap-3"
                 >
                   Get Started <ArrowRight className="w-6 h-6" />
                 </a>
@@ -865,7 +795,7 @@ export default function Home() {
       {/* Client Reviews / Testimonials */}
       <motion.section
       id="testimonials"
-      className="relative py-24 bg-gradient-to-b from-indigo-50 via-white to-white overflow-hidden"
+      className="relative py-24 bg-linear-to-b from-indigo-50 via-white to-white overflow-hidden"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
