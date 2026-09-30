@@ -319,7 +319,7 @@ const Page = () => {
                   </div>
 
                   {/* Page Numbers */}
-                  <div>
+                  {/* <div>
                     <label className={labelClass}><Hash size={10} className="inline mr-1" />Page Numbers</label>
                     <input
                       type="text"
@@ -336,7 +336,7 @@ const Page = () => {
                       className={inputClass}
                     />
                     <p className="text-[10px] text-gray-400 mt-1">Comma separated page numbers</p>
-                  </div>
+                  </div> */}
 
                   {/* Signing Mode */}
                   <div>

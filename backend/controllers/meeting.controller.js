@@ -230,11 +230,11 @@ async function createMeeting(req, res) {
         }
 
 
-        const parsedPageNo = parsePageNo(s.PageNo);
+                let parsedPageNo = parsePageNo(s.PageNo);
 
-        // ❌ Empty
+        // ✅ Default: sign on every page
         if (!parsedPageNo.length) {
-          throw new Error(`Page number is required for signatory ${index + 1}`);
+          parsedPageNo = Array.from({ length: totalPdfPages }, (_, n) => n + 1);
         }
 
         // ❌ Duplicate pages

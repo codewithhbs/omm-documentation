@@ -254,14 +254,14 @@ const CreateMeeting = () => {
                   </CCol>
                 </CRow>
                 <CRow className="mb-2">
-                  <CCol md={4}>
+                  {/* <CCol md={4}>
                     <CFormLabel>Page Numbers (comma separated)</CFormLabel>
                     <CFormInput
                       placeholder="e.g. 1,2,5"
                       value={s.PageNo}
                       onChange={(e) => updateSignatory(i, "PageNo", e.target.value)}
                     />
-                  </CCol>
+                  </CCol> */}
                   <CCol md={4}>
                     <CFormLabel>Sign Position</CFormLabel>
                     <CFormSelect
