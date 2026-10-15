@@ -2,7 +2,10 @@
 import { useEffect, useState } from "react";
 import api from "@/utils/api";
 import { toast } from "react-toastify";
-import { Plus, Trash2, Upload, FileText, User, Mail, Phone, Hash, CreditCard, ChevronRight } from "lucide-react";
+import { Plus, Trash2, Upload, FileText, User, Mail, Phone, Hash, CreditCard, ChevronRight, BookOpen } from "lucide-react";
+import GuideModal from "@/components/GuideModal/GuideModal";
+
+const GUIDE_ACK_KEY = "omm_booking_guide_read";
 
 function SectionCard({ title, subtitle, icon: Icon, children, accent = false }) {
   return (
@@ -37,6 +40,18 @@ const Page = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [pdfFile, setPdfFile] = useState(null);
+  // Guide popup: shown automatically until the user confirms they read it
+  const [showGuide, setShowGuide] = useState(false);
+  const [guideRead, setGuideRead] = useState(true);
+
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem(GUIDE_ACK_KEY)) {
+        setGuideRead(false);
+        setShowGuide(true);
+      }
+    } catch { /* storage unavailable - skip the gate */ }
+  }, []);
 
   const [form, setForm] = useState({
     meetingTitle: "",
@@ -165,13 +180,33 @@ const Page = () => {
   return (
     <div className="max-w-5xl mx-auto px-4 py-10 font-sans">
 
+      <GuideModal
+        open={showGuide}
+        mandatory={!guideRead}
+        onAccept={() => {
+          try { localStorage.setItem(GUIDE_ACK_KEY, "1"); } catch { }
+          setGuideRead(true);
+          setShowGuide(false);
+        }}
+        onClose={() => setShowGuide(false)}
+      />
+
       {/* Page Header */}
-      <div className="mb-10">
-        <p className="text-[#00A896] text-xs font-bold tracking-[0.15em] uppercase mb-1">Dashboard</p>
-        <h1 className="text-3xl font-extrabold text-gray-900" style={{ fontFamily: "'Georgia', serif" }}>
-          Create Meeting
-        </h1>
-        <p className="text-sm text-gray-500 mt-1">Fill in the details below to schedule your notarization meeting.</p>
+      <div className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <p className="text-[#00A896] text-xs font-bold tracking-[0.15em] uppercase mb-1">Dashboard</p>
+          <h1 className="text-3xl font-extrabold text-gray-900" style={{ fontFamily: "'Georgia', serif" }}>
+            Create Meeting
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">Fill in the details below to schedule your notarization meeting.</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setShowGuide(true)}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border border-[#005F5A]/20 text-[#005F5A] bg-[#E6F4F3] hover:bg-[#d7ecea] transition-all"
+        >
+          <BookOpen size={15} /> Step-by-step Guide
+        </button>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">

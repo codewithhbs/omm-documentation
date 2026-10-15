@@ -956,13 +956,32 @@ async function advSignDetail(req, res) {
       });
     }
 
-    const cleanPageNo = [
+    // Advocate signs on EVERY page of the document. A PageNo in the request is
+    // still honoured if someone sends one (e.g. old clients), otherwise we read
+    // the PDF and select all pages automatically.
+    let cleanPageNo = [
       ...new Set(
-        (Array.isArray(PageNo) ? PageNo : [PageNo])
+        (Array.isArray(PageNo) ? PageNo : PageNo != null ? [PageNo] : [])
           .map(Number)
-          .filter(n => !isNaN(n))
+          .filter(n => Number.isInteger(n) && n > 0)
       )
     ];
+
+    if (!cleanPageNo.length) {
+      const pdfRes = await axios.get(meeting.documentUrl.pdf, {
+        responseType: "arraybuffer",
+      });
+      const totalPdfPages = await getPdfPageCount(Buffer.from(pdfRes.data));
+
+      if (!totalPdfPages || totalPdfPages <= 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Unable to read PDF pages",
+        });
+      }
+
+      cleanPageNo = Array.from({ length: totalPdfPages }, (_, n) => n + 1);
+    }
 
     // ✅ Create signer object
     const signer = {
@@ -988,7 +1007,7 @@ async function advSignDetail(req, res) {
       name,
       email,
       MobileNo,
-      PageNo,
+      PageNo: cleanPageNo,
       signPosition,
       signingMode
     };

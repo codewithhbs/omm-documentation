@@ -41,6 +41,13 @@ function DetailRow({ label, value }) {
   )
 }
 
+// "1, 2, 3 ... 40" is unreadable for long PDFs - show "All pages (40)" when every page from 1..n is selected
+const formatPages = (pages = []) => {
+  const nums = pages.map(Number).filter(n => n > 0).sort((a, b) => a - b)
+  if (nums.length > 3 && nums.every((n, i) => n === i + 1)) return `All pages (${nums.length})`
+  return nums.join(', ')
+}
+
 const Page = () => {
   const { id } = useParams()
   const [meeting, setMeeting] = useState(null)
@@ -51,7 +58,7 @@ const Page = () => {
 
   const [signerForm, setSignerForm] = useState({
     name: '', email: '', CountryCode: '+91', MobileNo: '',
-    DOB: '', Gender: '', PageNo: [], pageInput: '',
+    DOB: '', Gender: '',
     signPosition: 'bottom-right', signingMode: 'adhaarESign',
   })
 
@@ -280,7 +287,7 @@ const Page = () => {
                     <td className="px-4 py-3 font-medium text-gray-800 whitespace-nowrap">{sig.name}</td>
                     <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{sig.email}</td>
                     <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{sig.CountryCode} {sig.MobileNo}</td>
-                    <td className="px-4 py-3 text-gray-600">{sig.PageNo.map(Number).join(', ')}</td>
+                    <td className="px-4 py-3 text-gray-600">{formatPages(sig.PageNo)}</td>
                     <td className="px-4 py-3">
                       <span className="text-[10px] font-semibold bg-[#E6F4F3] text-[#005F5A] px-2 py-0.5 rounded-full whitespace-nowrap">
                         {sig.signPosition}
@@ -491,17 +498,12 @@ const Page = () => {
                   </select>
                 </div>
 
-                {/* Page Numbers */}
-                <div>
-                  <label className={labelClass}>Page Numbers</label>
-                  <input type="text" placeholder="e.g. 1,2,3" value={signerForm.pageInput}
-                    onChange={(e) => {
-                      const value = e.target.value
-                      const pagesArray = [...new Set(value.split(',').map(p => Number(p.trim())).filter(n => !isNaN(n) && n > 0))]
-                      setSignerForm({ ...signerForm, pageInput: value, PageNo: pagesArray })
-                    }}
-                    className={inputClass} />
-                  <p className="text-[10px] text-gray-400 mt-1">Comma separated page numbers</p>
+                {/* Signing pages: no input needed - signature is placed on every page automatically */}
+                <div className="flex items-start gap-2 bg-[#E6F4F3] border border-[#005F5A]/15 rounded-xl px-4 py-3">
+                  <Hash size={14} className="text-[#005F5A] mt-0.5 shrink-0" />
+                  <p className="text-xs text-[#005F5A] font-medium">
+                    Your signature will be placed on all pages of the document automatically.
+                  </p>
                 </div>
 
                 {/* Sign Position */}

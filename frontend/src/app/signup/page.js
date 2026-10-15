@@ -2,12 +2,13 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { User, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import { User, Mail, Lock, Eye, EyeOff, ArrowRight, BookOpen } from "lucide-react";
 import Link from "next/link";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import GuideModal from "@/components/GuideModal/GuideModal";
 
 const inputClass =
   "w-full border border-gray-200 rounded-xl py-3 text-sm text-gray-800 placeholder-gray-400 bg-gray-50 focus:bg-white focus:outline-none focus:border-[#005F5A] focus:ring-2 focus:ring-[#005F5A]/10 transition-all duration-200";
@@ -38,6 +39,9 @@ export default function Page() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
+  // Guide is shown first; user must read it before registering
+  const [showGuide, setShowGuide] = useState(true);
+  const [guideRead, setGuideRead] = useState(false);
   const [formData, setFormData] = useState({
     name: "", email: "", password: "", confirm: "", userName: "", familyName: "",
   });
@@ -53,6 +57,10 @@ export default function Page() {
   async function handleSubmit(e) {
     e.preventDefault();
     setErrorMsg(null);
+    if (!guideRead) {
+      setShowGuide(true);
+      return setErrorMsg("Please read the step-by-step guide before creating your account.");
+    }
     if (!formData.userName?.trim()) return setErrorMsg("Username is required.");
     if (!formData.name?.trim()) return setErrorMsg("Given name is required.");
     if (!formData.email || !isEmail(formData.email)) return setErrorMsg("Valid email is required.");
@@ -92,6 +100,13 @@ export default function Page() {
   return (
     <>
       <ToastContainer position="top-right" newestOnTop theme="colored" />
+
+      <GuideModal
+        open={showGuide}
+        mandatory={!guideRead}
+        onAccept={() => { setGuideRead(true); setShowGuide(false); }}
+        onClose={() => setShowGuide(false)}
+      />
 
       <div className="min-h-screen bg-gray-50 flex font-sans">
 
@@ -151,6 +166,13 @@ export default function Page() {
                 Create Your Account
               </h1>
               <p className="text-sm text-gray-400">Start notarising documents online in minutes.</p>
+              <button
+                type="button"
+                onClick={() => setShowGuide(true)}
+                className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-[#005F5A] hover:underline"
+              >
+                <BookOpen size={13} /> Read the step-by-step guide
+              </button>
             </div>
 
             {/* Card */}
