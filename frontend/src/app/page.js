@@ -31,6 +31,7 @@ import {
   Scale
 } from 'lucide-react';
 import Image from 'next/image';
+import Testimonials from '@/components/Testimonial/Testimonial';
 
 const Home = () => {
   const [openFaq, setOpenFaq] = useState(null);
@@ -543,76 +544,7 @@ const Home = () => {
       </section>
 
       {/* Client Testimonial Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-16">Client Testimonial</h2>
-
-          <div className="relative">
-            {/* Left Arrow */}
-            <button className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100">
-              <ChevronLeft className="w-6 h-6 text-gray-600" />
-            </button>
-
-            {/* Testimonials Grid */}
-            <div className="grid md:grid-cols-3 gap-8 px-12">
-              {/* Testimonial 1 */}
-              <div className="text-center">
-                <img
-                  src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face"
-                  alt="Dush A."
-                  className="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-gray-200"
-                />
-                <p className="text-sm text-gray-700 mb-4 italic">
-                  "Legally Binding changes the third contour egreocomtanlosih with experience and through no obisso ton your hempors."
-                </p>
-                <h4 className="font-bold">Dush A.</h4>
-                <p className="text-sm text-gray-500">Provessicator</p>
-              </div>
-
-              {/* Testimonial 2 */}
-              <div className="text-center">
-                <img
-                  src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=150&h=150&fit=crop&crop=face"
-                  alt="Anna"
-                  className="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-gray-200"
-                />
-                <p className="text-sm text-gray-700 mb-4 italic">
-                  "I have one ereon of our closers we to promatomly great country to assoletion we barrinow Tmrepa contact with the clients."
-                </p>
-                <h4 className="font-bold">Anna</h4>
-                <p className="text-sm text-gray-500">Business lemal</p>
-              </div>
-
-              {/* Testimonial 3 */}
-              <div className="text-center">
-                <img
-                  src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop&crop=face"
-                  alt="Susanne Ulaana"
-                  className="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-gray-200"
-                />
-                <p className="text-sm text-gray-700 mb-4 italic">
-                  "We'x amading onaine the seal aero increased an embedded eegland, a emst confiru what find your consulant while."
-                </p>
-                <h4 className="font-bold">Susanne Ulaana</h4>
-                <p className="text-sm text-gray-500">Conser</p>
-              </div>
-            </div>
-
-            {/* Right Arrow */}
-            <button className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100">
-              <ChevronRight className="w-6 h-6 text-gray-600" />
-            </button>
-
-            {/* Dots Indicator */}
-            <div className="flex justify-center gap-2 mt-8">
-              <div className="w-2 h-2 rounded-full bg-gray-400"></div>
-              <div className="w-2 h-2 rounded-full bg-gray-300"></div>
-              <div className="w-2 h-2 rounded-full bg-gray-300"></div>
-              <div className="w-2 h-2 rounded-full bg-gray-300"></div>
-            </div>
-          </div>
-        </div>
-      </section>
+     <Testimonials />
 
 
 
